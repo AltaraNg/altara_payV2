@@ -1,0 +1,226 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="secondary">
+    <ion-button size="small"  (click)="logout()"> <ion-icon slot="icon-only" name="log-out"></ion-icon>
+    </ion-button>
+  </ion-buttons >
+    <ion-title>Altara Pay</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+
+<ion-content class="center" center text-center>
+  <button mat-raised-button (click)="reactivate()" id="toggle-linear">
+    Reactivation
+  </button>
+
+  <button mat-raised-button (click)="isLinear = !isLinear" id="toggle-linear">
+    {{!isLinear ? 'Enable linear mode' : 'Disable linear mode'}}
+  </button> 
+  <app-loading></app-loading>
+  <mat-vertical-stepper [linear]="isLinear" #stepper>
+    <mat-step [stepControl]="firstFormGroup">
+      <form [formGroup]="firstFormGroup">
+        <ng-template matStepLabel>Enter Customer Id Number</ng-template>
+        <hr>
+        <mat-form-field>
+          <input matInput placeholder="Customer Id Number" formControlName="customerId" required>
+        </mat-form-field>
+        <div>
+          <button (click)="checkId(stepper)" mat-button>Next</button>
+        </div>
+      </form>
+    </mat-step>
+    <mat-step [stepControl]="secondFormGroup">
+      <form [formGroup]="secondFormGroup">
+        <ng-template matStepLabel>Comfirm Customer Data</ng-template>
+        <hr>
+        <mat-form-field>
+          <input matInput placeholder="First Name" formControlName="first_name" required>
+        </mat-form-field>
+        <hr>
+        <mat-form-field>
+          <input matInput placeholder="Middle Name" formControlName="middle_name">
+        </mat-form-field>
+        <hr>
+        <mat-form-field>
+          <input matInput placeholder="Last Name" formControlName="last_name" required>
+        </mat-form-field>
+        <hr>
+        <mat-form-field>
+          <input matInput placeholder="Phone Number" formControlName="phoneNo" required>
+        </mat-form-field>
+        <hr>
+        <mat-form-field>
+          <input matInput placeholder="Email" formControlName="email" required>
+        </mat-form-field>
+
+
+        <hr>
+        <mat-form-field>
+          <mat-select matNativeControl formControlName="sector" required>
+            <mat-option value="">Select Sector</mat-option>
+            <mat-option *ngFor="let sector of ['informal(business)','formal'];" [value]="sector"> {{sector}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+
+        <div>
+          <button mat-button matStepperPrevious>Back</button>
+          <button mat-button (click)="confirmData(stepper)">Comfirm</button>
+        </div>
+      </form>
+    </mat-step>
+    <mat-step [stepControl]="thirdFormGroup">
+      <form [formGroup]="thirdFormGroup">
+        <ng-template matStepLabel>Enter Product SKU Number</ng-template>
+        <hr>
+        <mat-form-field>
+          <input matInput placeholder="Product SKU Number" formControlName="productSku" required>
+        </mat-form-field>
+        <div>
+          <button mat-button matStepperPrevious>Back</button>
+          <button (click)="checkProductSku(stepper)" mat-button>Next</button>
+        </div>
+      </form>
+    </mat-step>
+    <mat-step [stepControl]="fourthFormGroup">
+      <form [formGroup]="fourthFormGroup">
+        <ng-template matStepLabel>Select Sales Type and Plan</ng-template>
+        <hr>
+        <mat-label>
+          <!-- Product Name : Product Name : {{product.name}} -->
+        </mat-label>
+        <hr>
+        <mat-form-field>
+          <mat-select matNativeControl formControlName="saleType" required>
+            <mat-option value="">Select Sales Type</mat-option>
+            <mat-option *ngFor="let type of saleTypes;" [value]="type.id"> {{type.name}} </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <hr>
+        <mat-form-field>
+          <mat-select matNativeControl formControlName="salePlan" required>
+            <mat-option value="">Select Sales Plan</mat-option>
+            <mat-option *ngFor="let plan of salePlans;" [value]="plan.id"> {{plan.name}} </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <div>
+          <button mat-button matStepperPrevious>Back</button>
+          <button (click)="checkTypePlan(stepper)" mat-button>Next</button>
+        </div>
+      </form>
+    </mat-step>
+
+    <mat-step>
+      <ng-template matStepLabel>Comfirm Order Details</ng-template>
+
+      <ion-grid>
+        <!-- <ion-row color="primary" justify-content-center>
+          <ion-col align-self-center size-md="6" size-lg="5" size-xs="12"> -->
+        <ion-row color="primary">
+          <ion-col>
+            Name
+          </ion-col>
+          <ion-col>
+            {{productName}}
+          </ion-col>
+        </ion-row>
+        <ion-row color="primary">
+          <ion-col>
+            Type
+          </ion-col>
+          <ion-col>
+            {{saleType}}
+          </ion-col>
+        </ion-row>
+        <ion-row color="primary">
+          <ion-col>
+            Sale Plan
+          </ion-col>
+          <ion-col>
+            {{salePlan}}
+          </ion-col>
+        </ion-row>
+        <ion-row color="primary">
+          <ion-col>
+            Down Payment
+          </ion-col>
+          <ion-col>
+            {{sixthFormGroup.value.downPayment | currency:'NGN'}}
+          </ion-col>
+        </ion-row>
+
+        <ion-row color="primary">
+          <ion-col>
+            Repayment
+          </ion-col>
+          <ion-col>
+            {{sixthFormGroup.value.repaymentPrice | currency:'NGN' }}
+          </ion-col>
+        </ion-row>
+
+        <ion-row color="primary">
+          <ion-col>
+            Total Price
+          </ion-col>
+          <ion-col>
+            {{sixthFormGroup.value.totalPrice | currency:'NGN'}}
+          </ion-col>
+        </ion-row>
+
+      </ion-grid>
+
+      <div>
+        <button mat-button matStepperPrevious>Back</button>
+        <button (click)="processAmount(stepper)" mat-button>Process Payment</button>
+      </div>
+    </mat-step>
+    <mat-step [stepControl]="fifthFormGroup">
+      <form [formGroup]="fifthFormGroup">
+        <ng-template matStepLabel>Make Payment</ng-template>
+        <hr>
+
+        <mat-radio-group aria-label="Select an option" formControlName="makePayment">
+          <mat-radio-button value="1">Down Payment</mat-radio-button> &nbsp;
+          <mat-radio-button value="2">Enter Amount</mat-radio-button>
+        </mat-radio-group>
+        <hr>
+        <mat-form-field *ngIf="radioValue == '1'">
+          <input matInput placeholder="Down Payment" formControlName="downPayment" required>
+        </mat-form-field>
+        <hr>
+        <mat-form-field *ngIf="radioValue == '2'">
+          <input matInput placeholder="Enter Amount" formControlName="enterAmount" required>
+        </mat-form-field>
+        <div>
+          <button mat-button matStepperPrevious>Back</button>
+          <button (click)="processPayment(stepper)" mat-button>Comfirm</button>
+        </div>
+      </form>
+    </mat-step>
+
+    <mat-step>
+      <ng-template matStepLabel>Initialize Payment(Handover to Customer)
+      </ng-template>
+      <small style="color:red">push button if customer transfered downpayment <ion-toggle  (ionChange)="Clicked()"></ion-toggle></small>
+      
+
+      <!-- <div class='center'> -->
+      <ion-button *ngIf='!transfer' size="small" expand="block" color="primary" angular4-paystack
+        [key]="'pk_live_adad9aed8aa59730d64d0bed26226427b65de8a7'" [email]="secondFormGroup.value.email"
+        [amount]="amount" [ref]="ref" [subaccount]="sub_acct" [channels]="['card']" [class]="'btn btn-primary'"
+        (close)="paymentCancel(stepper)" (callback)="paymentDone($event,stepper)">Pay
+      </ion-button>
+
+      <ion-button *ngIf='transfer' size="small" expand="block" color="primary" (click)="transferDone(stepper)" >Comfirm Transfer</ion-button>
+      <!-- </div> -->
+      <div>
+        <button mat-button matStepperPrevious>Back</button>
+      </div>
+    </mat-step>
+
+  </mat-vertical-stepper>
+</ion-content>

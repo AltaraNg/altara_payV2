@@ -1,3 +1,9 @@
+<div *ngIf="showSplash" class="spalsh">
+  <div  class="spinner"></div>
+</div>
 <ion-app>
-  <ion-router-outlet></ion-router-outlet>
+  <ion-split-pane>
+    <!-- <app-loading></app-loading> -->
+    <ion-router-outlet main></ion-router-outlet>
+  </ion-split-pane>
 </ion-app>

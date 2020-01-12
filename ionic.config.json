@@ -1,5 +1,7 @@
 {
   "name": "altara-pay-v2",
-  "integrations": {},
+  "integrations": {
+    "cordova": {}
+  },
   "type": "angular"
 }
