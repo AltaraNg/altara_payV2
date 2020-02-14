@@ -20,8 +20,8 @@ export class AuthService {
   isCustomerValid = false;
   productData: any;
   isProductValid = false;
-  id:any;
-  branch_id:any;
+  id: any;
+  branch_id: any;
 
 
   constructor(
@@ -84,10 +84,50 @@ export class AuthService {
     )
   }
 
-  updatesCustomerInfo(id: Number, email: String, firstName: String, middleName: String, lastName: String, phoneNo: String, sector:String) {
-   
+  updatesCustomerInfo(id: Number, email: String, firstName: String, middleName: String, lastName: String, phoneNo: String, dateOfBirth: String, sector: String,
+    occupation: String, company: String, income: String, household: String
+  ) {
+
     return this.http.post(this.env.API_URL + 'updateCustInfo',
-      { id: id, email: email, firstName: firstName, middleName: middleName, lastName: lastName, phoneNo: phoneNo, sector:sector }
+      {
+        id: id, email: email, firstName: firstName, middleName: middleName, lastName: lastName, phoneNo: phoneNo, dateOfBirth: dateOfBirth, sector: sector,
+        occupation: occupation, company: company, income: income, household: household
+      }
+    ).pipe(
+      tap(data => {
+        return data;
+      })
+    )
+  }
+
+  pushDDdata(
+    customer_id: Number,
+    order_id: String,
+    salaryDay: Number,
+    salaryDay2: Number,
+    salaryDay3: Number,
+    salaryProof: String,
+    guarantorSigned: String,
+    addressVisited: String,
+    creditReport: String,
+    creditPoints: String,
+    mode: any
+  ) {
+
+    return this.http.post(this.env.API_URL + 'dd_data',
+      {
+        customer_id: customer_id,
+        order_id: order_id,
+        salaryDay: salaryDay,
+        salaryDay2: salaryDay2,
+        salaryDay3: salaryDay3,
+        salaryProof: salaryProof,
+        guarantorSigned: guarantorSigned,
+        addressVisited: addressVisited,
+        creditReport: creditReport,
+        creditPoints: creditPoints,
+        mode: mode
+      }
     ).pipe(
       tap(data => {
         return data;
@@ -106,7 +146,7 @@ export class AuthService {
   }
 
   createCustomer(id: Number, email: String, firstName: String, lastName: String, phoneNo: String) {
-    let tokenStr='sk_live_b2b0dc2e326f9d38e9d41ea52ef1517171d72637';
+    let tokenStr = 'sk_live_b2b0dc2e326f9d38e9d41ea52ef1517171d72637';
     let headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${tokenStr}`
@@ -134,14 +174,14 @@ export class AuthService {
   }
 
   logout() {
-          this.storage.remove("token");
-          this.storage.remove("id");
-          this.storage.remove("branch_id");
-          this.isLoggedIn = false;
-          delete this.token;
+    this.storage.remove("token");
+    this.storage.remove("id");
+    this.storage.remove("branch_id");
+    this.isLoggedIn = false;
+    delete this.token;
   }
 
-  postOrder(order:any){
+  postOrder(order: any) {
     return this.http.post(this.env.API_URL + 'purchase',
       order
     ).pipe(
@@ -151,14 +191,14 @@ export class AuthService {
     )
   }
 
-  logAuthcode(order_id:any,auth_code:any){
+  logAuthcode(order_id: any, auth_code: any) {
     return this.http.post(this.env.API_URL + 'paystackauthcode',
-    {order_id:order_id,auth_code:auth_code}
-  ).pipe(
-    tap(data => {
-      return data;
-    })
-  )
+      { order_id: order_id, auth_code: auth_code }
+    ).pipe(
+      tap(data => {
+        return data;
+      })
+    )
   }
 
   get user() {
@@ -208,18 +248,28 @@ export class AuthService {
     );
   }
 
-  getLastreceipt(){
+  getLastreceipt() {
     return this.http.post(this.env.API_URL + 'lastReciept',
-    {branch_id:this.branch_id}
-  ).pipe(
-    tap(data => {
-      return data;
-    })
-  )
+      { branch_id: this.branch_id }
+    ).pipe(
+      tap(data => {
+        return data;
+      })
+    )
+  }
+
+  getOrderList(customer_id) {
+    return this.http.post(this.env.API_URL + 'receiptID',
+      { customer_id: customer_id }
+    ).pipe(
+      tap(data => {
+        return data;
+      })
+    )
   }
 
   generateAuthKey(ref: any) {
-   let tokenStr='sk_live_b2b0dc2e326f9d38e9d41ea52ef1517171d72637';
+    let tokenStr = 'sk_live_b2b0dc2e326f9d38e9d41ea52ef1517171d72637';
     return this.http.get(this.env.PAYSTACK_CUSTOMER_VERIFY + ref + "", { headers: { "Authorization": `Bearer ${tokenStr}` } }
     ).pipe(
       tap(data => {
@@ -229,14 +279,14 @@ export class AuthService {
     )
   }
 
-  updateRepayment(repay:any){
+  updateRepayment(repay: any) {
     return this.http.post(this.env.API_URL + 'formal_repay',
-    repay
-  ).pipe(
-    tap(data => {
-      return data;
-    })
-  )
+      repay
+    ).pipe(
+      tap(data => {
+        return data;
+      })
+    )
   }
 }
 

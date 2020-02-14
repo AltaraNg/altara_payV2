@@ -18,6 +18,8 @@ import { Platform } from "@ionic/angular";
   styleUrls: ["./dashboard.page.scss"]
 })
 export class DashboardPage implements OnInit {
+  minNum = 1;
+  maxNum = 31;
   user: User;
   isLinear = true;
   product: {
@@ -53,6 +55,7 @@ export class DashboardPage implements OnInit {
   fourthFormGroup: FormGroup;
   fifthFormGroup: FormGroup;
   sixthFormGroup: FormGroup;
+  seventhFormGroup: FormGroup;
   isUpdated: boolean = true;
   customerData: any;
   update: any;
@@ -98,7 +101,7 @@ export class DashboardPage implements OnInit {
   order_id: string;
   verifyData: any;
   lastReceipt: any;
-  transfer : boolean = false;
+  transfer: boolean = false;
 
   constructor(
     private _formBuilder: FormBuilder,
@@ -203,6 +206,17 @@ export class DashboardPage implements OnInit {
       downPayment: [""]
     });
 
+    this.seventhFormGroup = this._formBuilder.group({
+      salaryDay: ["", [Validators.required, Validators.min(this.minNum), Validators.max(this.maxNum)]],
+      salaryDay2: ["", [Validators.required, Validators.min(this.minNum), Validators.max(this.maxNum)]],
+      salaryDay3: ["", [Validators.required, Validators.min(this.minNum), Validators.max(this.maxNum)]],
+      salaryProof: ["", Validators.required],
+      guarantorSigned: ["", Validators.required],
+      addressVisited: ["", Validators.required],
+      creditReport: ["", Validators.required],
+      creditPoints: ["", Validators.required]
+    });
+
     this.firstFormGroup = this._formBuilder.group({
       customerId: ["", Validators.required]
     });
@@ -212,7 +226,12 @@ export class DashboardPage implements OnInit {
       middle_name: [""],
       last_name: ["", Validators.required],
       phoneNo: ["", Validators.required],
-      sector: ["", Validators.required]
+      dateOfBirth: ["", Validators.required],
+      sector: ["", Validators.required],
+      occupation: ["", Validators.required],
+      company: ["", Validators.required],
+      income: ["", Validators.required],
+      household: ["", Validators.required]
     });
     this.thirdFormGroup = this._formBuilder.group({
       productSku: ["", Validators.required]
@@ -269,8 +288,28 @@ export class DashboardPage implements OnInit {
               this.customerData.checklist[0].telephone,
               Validators.required
             ],
+            dateOfBirth: [
+              this.customerData.checklist[0].date_of_birth,
+              Validators.required
+            ],
             sector: [
               this.customerData.checklist[0].employment_status,
+              Validators.required
+            ],
+            occupation: [
+              this.customerData.checklist[0].occupation,
+              Validators.required
+            ],
+            company: [
+              this.customerData.checklist[0].name_of_company_or_business,
+              Validators.required
+            ],
+            income: [
+              this.customerData.checklist[0].current_sal_or_business_income,
+              Validators.required
+            ],
+            household: [
+              this.customerData.checklist[0].people_in_household,
               Validators.required
             ]
           });
@@ -281,6 +320,11 @@ export class DashboardPage implements OnInit {
   }
   // 130-0796-CHE-ELO-AP
 
+  confirmDocData(stepper: MatStepper) {
+    console.log(this.seventhFormGroup.value);
+    stepper.next();
+  }
+
   confirmData(stepper: MatStepper) {
     this.authService
       .updatesCustomerInfo(
@@ -290,7 +334,12 @@ export class DashboardPage implements OnInit {
         this.secondFormGroup.value.middle_name,
         this.secondFormGroup.value.last_name,
         this.secondFormGroup.value.phoneNo,
-        this.secondFormGroup.value.sector
+        this.secondFormGroup.value.dateOfBirth,
+        this.secondFormGroup.value.sector,
+        this.secondFormGroup.value.occupation,
+        this.secondFormGroup.value.company,
+        this.secondFormGroup.value.income,
+        this.secondFormGroup.value.household
       )
       .subscribe(result => {
         console.log(result);
@@ -379,7 +428,7 @@ export class DashboardPage implements OnInit {
     });
   }
 
-  processRecieptNo(stepper: MatStepper, transfer:boolean) {
+  processRecieptNo(stepper: MatStepper, transfer: boolean) {
     var re: any;
     var auth_code = (transfer == false) ? this.verifyData.data.authorization.authorization_code : null;
     this.authService.getBranchId().then(() => {
@@ -395,12 +444,28 @@ export class DashboardPage implements OnInit {
         // this.lastReceipt = 'LSIW00022'
         console.log(this.lastReceipt);
         if (result) {
-          this.pushauthCode(
+          this.authService.pushDDdata(
+            this.firstFormGroup.value.customerId,
             this.computeR(this.lastReceipt),
-            auth_code,
-            // Math.floor(Math.random() * 1000),
-            stepper
-          );
+            this.seventhFormGroup.value.salaryDay,
+            this.seventhFormGroup.value.salaryDay2,
+            this.seventhFormGroup.value.salaryDay3,
+            this.seventhFormGroup.value.salaryProof,
+            this.seventhFormGroup.value.guarantorSigned,
+            this.seventhFormGroup.value.addressVisited,
+            this.seventhFormGroup.value.creditReport,
+            this.seventhFormGroup.value.creditPoints,
+            (this.secondFormGroup.value.sector = 'formal') ? 1 : 0
+          ).subscribe(res => {
+            if (res) {
+              this.pushauthCode(
+                this.computeR(this.lastReceipt),
+                auth_code,
+                // Math.floor(Math.random() * 1000),
+                stepper
+              );
+            }
+          });
         }
       });
     });
@@ -418,7 +483,9 @@ export class DashboardPage implements OnInit {
       { id: 12, pre: "APTA" },
       { id: 13, pre: "APOW" },
       { id: 14, pre: "APOG" },
-      { id: 15, pre: "AAIW" }
+      { id: 15, pre: "AAIW" },
+      { id: 16, pre: "APYO" },
+      { id: 17, pre: "APFU" }
     ];
 
     var nR: any, rec_dd: any, prefix: any, r: any;
@@ -620,15 +687,26 @@ export class DashboardPage implements OnInit {
   }
 
   pushauthCode(order_id: any, auth_code: any, stepper: MatStepper) {
-    this.authService.logAuthcode(order_id, auth_code).subscribe(result => {
-      if (result) {
-        this.authService.getEpId().then(() => {
-          console.log(this.authService.id);
-          this.order.sales_agent = this.authService.id;
-          this.pushOrder(stepper);
-        });
-      }
-    });
+    if (auth_code !== null){
+      this.authService.logAuthcode(order_id, auth_code).subscribe(result => {
+        if (result) {
+          this.authService.getEpId().then(() => {
+            console.log(this.authService.id);
+            this.order.sales_agent = this.authService.id;
+            this.pushOrder(stepper);
+          });
+        }
+      });
+    }
+    else 
+    {
+      this.authService.getEpId().then(() => {
+        console.log(this.authService.id);
+        this.order.sales_agent = this.authService.id;
+        this.pushOrder(stepper);
+      });
+    }
+   
   }
 
   pushOrder(stepper: MatStepper) {
@@ -703,6 +781,7 @@ export class DashboardPage implements OnInit {
         this.lastReceipt = "";
         stepper.reset();
         this.ngOnInit();
+        
       }
     });
   }
@@ -717,7 +796,7 @@ export class DashboardPage implements OnInit {
   }
 
   reactivate() {
-      this.navCtrl.navigateRoot("/reactivation");
-    }
-  
+    this.navCtrl.navigateRoot("/reactivation");
+  }
+
 }

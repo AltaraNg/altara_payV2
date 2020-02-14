@@ -10,7 +10,7 @@ import { HttpClientModule,HTTP_INTERCEPTORS, HttpClient, }    from '@angular/com
 import { NativeStorage } from '@ionic-native/native-storage/ngx';
 import {CdkStepperModule} from '@angular/cdk/stepper';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatStepperModule, MatInputModule, MatButtonModule, MatAutocompleteModule,MatProgressSpinnerModule } from '@angular/material';
+import { MatStepperModule, MatDatepickerModule, MatNativeDateModule, MatInputModule, MatButtonModule, MatAutocompleteModule,MatProgressSpinnerModule } from '@angular/material';
 import {ReactiveFormsModule, FormsModule} from '@angular/forms';
 import { Angular4PaystackModule } from 'angular4-paystack';
 import { LoaderService } from './loader.service';
@@ -31,6 +31,8 @@ import {SharedModule} from './shared.module'
     CdkStepperModule,
     MatStepperModule, 
     MatInputModule, 
+    MatDatepickerModule,
+    MatNativeDateModule,
     MatButtonModule, 
     MatAutocompleteModule,
     ReactiveFormsModule, 

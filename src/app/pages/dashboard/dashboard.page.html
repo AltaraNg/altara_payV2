@@ -11,13 +11,13 @@
 
 
 <ion-content class="center" center text-center>
-  <button mat-raised-button (click)="reactivate()" id="toggle-linear">
-    Reactivation
+   <button mat-raised-button (click)="reactivate()" id="toggle-linear">
+   <strong>Reactivate Customer >></strong> 
   </button>
 
-  <button mat-raised-button (click)="isLinear = !isLinear" id="toggle-linear">
+   <!-- <button mat-raised-button (click)="isLinear = !isLinear" id="toggle-linear">
     {{!isLinear ? 'Enable linear mode' : 'Disable linear mode'}}
-  </button> 
+  </button>   -->
   <app-loading></app-loading>
   <mat-vertical-stepper [linear]="isLinear" #stepper>
     <mat-step [stepControl]="firstFormGroup">
@@ -35,44 +35,178 @@
     <mat-step [stepControl]="secondFormGroup">
       <form [formGroup]="secondFormGroup">
         <ng-template matStepLabel>Comfirm Customer Data</ng-template>
-        <hr>
-        <mat-form-field>
-          <input matInput placeholder="First Name" formControlName="first_name" required>
-        </mat-form-field>
-        <hr>
-        <mat-form-field>
-          <input matInput placeholder="Middle Name" formControlName="middle_name">
-        </mat-form-field>
-        <hr>
-        <mat-form-field>
-          <input matInput placeholder="Last Name" formControlName="last_name" required>
-        </mat-form-field>
-        <hr>
-        <mat-form-field>
-          <input matInput placeholder="Phone Number" formControlName="phoneNo" required>
-        </mat-form-field>
-        <hr>
-        <mat-form-field>
-          <input matInput placeholder="Email" formControlName="email" required>
-        </mat-form-field>
+        <ion-grid>
+          <ion-row>
+            <ion-col>
+              <mat-form-field>
+                <input matInput placeholder="First Name" formControlName="first_name" required>
+              </mat-form-field>
+            </ion-col>
+            <ion-col>
+              <mat-form-field>
+                <input matInput placeholder="Middle Name" formControlName="middle_name">
+              </mat-form-field>
+            </ion-col>
+          </ion-row>
 
+          <ion-row>
+            <ion-col>
+              <mat-form-field>
+                <input matInput placeholder="Last Name" formControlName="last_name" required>
+              </mat-form-field>
+            </ion-col>
+            <ion-col>
+              <mat-form-field>
+                <input matInput placeholder="Phone Number" formControlName="phoneNo" required>
+              </mat-form-field>
+            </ion-col>
+          </ion-row>
 
-        <hr>
-        <mat-form-field>
-          <mat-select matNativeControl formControlName="sector" required>
-            <mat-option value="">Select Sector</mat-option>
-            <mat-option *ngFor="let sector of ['informal(business)','formal'];" [value]="sector"> {{sector}}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
+          <ion-row>
+            <ion-col>
+              <mat-form-field>
+                <input matInput [matDatepicker]="pickeryear" formControlName="dateOfBirth"
+                placeholder="Date of Birth">
+                <mat-datepicker-toggle  [for]="pickeryear">
+                </mat-datepicker-toggle>
+                <mat-datepicker #pickeryear startView="year"></mat-datepicker>
+              </mat-form-field>
+            </ion-col>
+          </ion-row>
 
+          <ion-row>
+            <ion-col>
+              <mat-form-field>
+                <input matInput placeholder="Email" formControlName="email" required>
+              </mat-form-field>
+            </ion-col>
+            <ion-col>
+              <mat-form-field>
+                <mat-select matNativeControl formControlName="sector" required>
+                  <mat-option value="">Select Sector</mat-option>
+                  <mat-option *ngFor="let sector of ['informal(business)','formal'];" [value]="sector"> {{sector}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </ion-col>
+          </ion-row>
 
+          <ion-row>
+            <ion-col>
+              <mat-form-field>
+                <input matInput placeholder="Occupation" formControlName="occupation" required>
+              </mat-form-field>
+            </ion-col>
+            <ion-col>
+              <mat-form-field>
+                <input matInput placeholder="Company/Business name" formControlName="company" required>
+              </mat-form-field>
+            </ion-col>
+          </ion-row>
+
+          <ion-row>
+            <ion-col>
+              <mat-form-field>
+                <input matInput placeholder="Salary Income" formControlName="income" required>
+              </mat-form-field>
+            </ion-col>
+            <ion-col>
+              <mat-form-field>
+                <input matInput placeholder="Number in Household" formControlName="household" required>
+              </mat-form-field>
+            </ion-col>
+          </ion-row>
+
+        </ion-grid>
         <div>
           <button mat-button matStepperPrevious>Back</button>
           <button mat-button (click)="confirmData(stepper)">Comfirm</button>
         </div>
       </form>
     </mat-step>
+
+
+
+    <mat-step [stepControl]="seventhFormGroup">
+      <form [formGroup]="seventhFormGroup">
+        <ng-template matStepLabel>Verification/Collection Data</ng-template>
+        <ion-grid>
+          <ion-row>
+            <ion-col>
+              <mat-form-field>
+                <input matInput placeholder="Deduction Day" formControlName="salaryDay" required>
+              </mat-form-field>
+            </ion-col>
+            <ion-col>
+              <mat-form-field>
+                <input matInput placeholder="Deduction Day" formControlName="salaryDay2">
+              </mat-form-field>
+            </ion-col>
+            <ion-col>
+              <mat-form-field>
+                <input matInput placeholder="Deduction Day" formControlName="salaryDay3">
+              </mat-form-field>
+            </ion-col>
+          </ion-row>
+
+          <ion-row>
+            <ion-col>
+              <mat-form-field>
+                <mat-select matNativeControl formControlName="salaryProof" required>
+                  <mat-option value="">Proof of Credit</mat-option>
+                  <mat-option *ngFor="let type of ['SMS Alert Screenshot','E-statement', 'Stamped-statement', 'Bank App History Screenshot'];" [value]="type"> {{type}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </ion-col>
+            <ion-col>
+              <mat-form-field>
+                <mat-select matNativeControl formControlName="guarantorSigned" required>
+                  <mat-option value="">Guarantor Signed?</mat-option>
+                  <mat-option *ngFor="let signed of ['Yes','No'];" [value]="signed"> {{signed}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </ion-col>
+            <ion-col>
+              <mat-form-field>
+                <mat-select matNativeControl formControlName="addressVisited" required>
+                  <mat-option value="">Address Visited ?</mat-option>
+                  <mat-option *ngFor="let visited of ['Yes','No'];" [value]="visited"> {{visited}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </ion-col>
+          </ion-row>
+
+          <ion-row>
+            <ion-col>
+              <mat-form-field>
+                <mat-select matNativeControl formControlName="creditReport" required>
+                  <mat-option value="">Credit Report Status</mat-option>
+                  <mat-option *ngFor="let status of ['Bad','Fair','No','Good'];" [value]="status"> {{status}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </ion-col>
+            <ion-col>
+              <mat-form-field>
+                <mat-select matNativeControl formControlName="creditPoints" required>
+                  <mat-option value="">Credit Point Status</mat-option>
+                  <mat-option *ngFor="let status of ['Bad','Average','Good'];" [value]="status"> {{status}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+        <div>
+          <button mat-button matStepperPrevious>Back</button>
+          <button mat-button (click)="confirmDocData(stepper)">Next</button>
+        </div>
+      </form>
+    </mat-step>
+
     <mat-step [stepControl]="thirdFormGroup">
       <form [formGroup]="thirdFormGroup">
         <ng-template matStepLabel>Enter Product SKU Number</ng-template>
@@ -207,15 +341,14 @@
       </ng-template>
       <small style="color:red">push button if customer transfered downpayment <ion-toggle  (ionChange)="Clicked()"></ion-toggle></small>
       
-
       <!-- <div class='center'> -->
-      <ion-button *ngIf='!transfer' size="small" expand="block" color="primary" angular4-paystack
+      <ion-button *ngIf='transfer === false' size="small" expand="block" color="primary" angular4-paystack
         [key]="'pk_live_adad9aed8aa59730d64d0bed26226427b65de8a7'" [email]="secondFormGroup.value.email"
         [amount]="amount" [ref]="ref" [subaccount]="sub_acct" [channels]="['card']" [class]="'btn btn-primary'"
-        (close)="paymentCancel(stepper)" (callback)="paymentDone($event,stepper)">Pay
+        (close)="paymentCancel(stepper)" (callback)="paymentDone($event,stepper)">Pay 
       </ion-button>
 
-      <ion-button *ngIf='transfer' size="small" expand="block" color="primary" (click)="transferDone(stepper)" >Comfirm Transfer</ion-button>
+      <ion-button *ngIf='transfer === true' size="small" expand="block" color="primary" (click)="transferDone(stepper)" >Comfirm Transfer</ion-button>
       <!-- </div> -->
       <div>
         <button mat-button matStepperPrevious>Back</button>

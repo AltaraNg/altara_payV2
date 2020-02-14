@@ -1,9 +1,63 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>reactivation</ion-title>
+    <ion-title>Altara Pay Reactivation</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content class="center" center text-center>
 
+  <button mat-raised-button (click)="backHome()" id="toggle-linear">
+   <strong> << New Request </strong>
+  </button>
+
+  <!-- <button mat-raised-button (click)="isLinear = !isLinear" id="toggle-linear">
+    {{!isLinear ? 'Enable linear mode' : 'Disable linear mode'}}
+  </button>  -->
+  <app-loading></app-loading>
+  <mat-vertical-stepper [linear]="isLinear" #stepper>
+    <mat-step [stepControl]="firstFormGroup">
+      <form [formGroup]="firstFormGroup">
+        <ng-template matStepLabel>Enter Customer Id Number</ng-template>
+        <hr>
+        <mat-form-field>
+          <input matInput placeholder="Customer Id Number" formControlName="customerId" required>
+        </mat-form-field>
+        <div>
+          <button (click)="checkId(stepper)" mat-button>Next</button>
+        </div>
+      </form>
+    </mat-step>
+     <mat-step [stepControl]="secondFormGroup">
+      <form [formGroup]="secondFormGroup">
+        <ng-template matStepLabel>Comfirm Customer Data</ng-template>
+        <hr>
+        <mat-form-field>
+          <mat-select matNativeControl formControlName="id" required>
+            <mat-option value="">Select Order ID</mat-option>
+            <mat-option *ngFor="let id of orderIds;" [value]="id.id"> {{id.id}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <div>
+          <button mat-button matStepperPrevious>Back</button>
+          <button mat-button (click)="confirmData(stepper)">Next</button>
+        </div>
+      </form>
+    </mat-step>
+
+    <mat-step>
+      <ng-template matStepLabel>Initialize Payment(Handover to Customer)
+      </ng-template>
+    
+      <ion-button  size="small" expand="block" color="primary" angular4-paystack
+        [key]="'pk_live_adad9aed8aa59730d64d0bed26226427b65de8a7'" [email]="email"
+        [amount]="10000" [ref]="ref" [subaccount]="ACCT_z6a4tsvupmoo0hz" [channels]="['card']" [class]="'btn btn-primary'"
+        (close)="paymentCancel(stepper)" (callback)="paymentDone($event,stepper)">Pay
+      </ion-button>
+      <div>
+        <button mat-button matStepperPrevious>Back</button>
+      </div>
+    </mat-step> 
+
+  </mat-vertical-stepper>
 </ion-content>
