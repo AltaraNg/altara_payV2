@@ -15,9 +15,9 @@
    <strong>Reactivate Customer >></strong> 
   </button>
 
-   <!-- <button mat-raised-button (click)="isLinear = !isLinear" id="toggle-linear">
+   <button mat-raised-button (click)="isLinear = !isLinear" id="toggle-linear">
     {{!isLinear ? 'Enable linear mode' : 'Disable linear mode'}}
-  </button>   -->
+  </button>  
   <app-loading></app-loading>
   <mat-vertical-stepper [linear]="isLinear" #stepper>
     <mat-step [stepControl]="firstFormGroup">
@@ -134,17 +134,17 @@
           <ion-row>
             <ion-col>
               <mat-form-field>
-                <input matInput placeholder="Deduction Day" formControlName="salaryDay" required>
+                <input matInput placeholder="Salary Day1" formControlName="salaryDay" required>
               </mat-form-field>
             </ion-col>
             <ion-col>
               <mat-form-field>
-                <input matInput placeholder="Deduction Day" formControlName="salaryDay2">
+                <input matInput placeholder="Salary Day2" formControlName="salaryDay2">
               </mat-form-field>
             </ion-col>
             <ion-col>
               <mat-form-field>
-                <input matInput placeholder="Deduction Day" formControlName="salaryDay3">
+                <input matInput placeholder="Salary Day3" formControlName="salaryDay3">
               </mat-form-field>
             </ion-col>
           </ion-row>
@@ -347,8 +347,8 @@
         [amount]="amount" [ref]="ref" [subaccount]="sub_acct" [channels]="['card']" [class]="'btn btn-primary'"
         (close)="paymentCancel(stepper)" (callback)="paymentDone($event,stepper)">Pay 
       </ion-button>
-
-      <ion-button *ngIf='transfer === true' size="small" expand="block" color="primary" (click)="transferDone(stepper)" >Comfirm Transfer</ion-button>
+      
+      <ion-button *ngIf='transfer === true' size="small" expand="block" color="primary" (click)="confirmDialog(stepper)" >Comfirm Transfer</ion-button>
       <!-- </div> -->
       <div>
         <button mat-button matStepperPrevious>Back</button>

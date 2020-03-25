@@ -11,10 +11,10 @@ const routes: Routes = [
   { path: 'login', loadChildren: './pages/auth/login/login.module#LoginPageModule' },
   { path: 'register', loadChildren: './pages/auth/register/register.module#RegisterPageModule' },
   
-  { path: 'dashboard', loadChildren: './pages/dashboard/dashboard.module#DashboardPageModule',canActivate: [AuthGuard]},
+  { path: 'dashboard', loadChildren: './pages/dashboard/dashboard.module#DashboardPageModule',/*canActivate: [AuthGuard]*/},
   {
     path: 'reactivation',
-    loadChildren: () => import('./pages/reactivation/reactivation.module').then( m => m.ReactivationPageModule),canActivate: [AuthGuard]xa
+    loadChildren: () => import('./pages/reactivation/reactivation.module').then( m => m.ReactivationPageModule),canActivate: [AuthGuard]
   },
 
 ];

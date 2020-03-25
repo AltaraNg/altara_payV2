@@ -15,12 +15,13 @@ import {ReactiveFormsModule, FormsModule} from '@angular/forms';
 import { Angular4PaystackModule } from 'angular4-paystack';
 import { LoaderService } from './loader.service';
 import { LoaderInterceptor } from './loader.interceptors';
-import {SharedModule} from './shared.module'
-
+import {SharedModule} from './shared.module';
+import { CustomMaterialModule } from './custom-material/custom-material.module';
+import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
 
 @NgModule({
-  declarations: [AppComponent],
-  entryComponents: [],
+  declarations: [AppComponent,ConfirmDialogComponent],
+  entryComponents: [ConfirmDialogComponent],
   imports: [
     SharedModule,
     BrowserModule,
@@ -38,7 +39,8 @@ import {SharedModule} from './shared.module'
     ReactiveFormsModule, 
     FormsModule,
     MatProgressSpinnerModule,
-    Angular4PaystackModule
+    Angular4PaystackModule,
+    CustomMaterialModule
     
   ],
   providers: [

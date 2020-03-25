@@ -2,6 +2,8 @@ import { Component, OnInit } from "@angular/core";
 import { MenuController, NavController } from "@ionic/angular";
 import { AuthService } from "../../services/auth.service";
 import { User } from "../../models/user";
+import { ConfirmDialogModel, ConfirmDialogComponent } from "../../confirm-dialog/confirm-dialog.component";
+import { MatDialog } from '@angular/material';
 import {
   FormBuilder,
   FormGroup,
@@ -102,6 +104,7 @@ export class DashboardPage implements OnInit {
   verifyData: any;
   lastReceipt: any;
   transfer: boolean = false;
+  result: string = '';
 
   constructor(
     private _formBuilder: FormBuilder,
@@ -110,7 +113,8 @@ export class DashboardPage implements OnInit {
     private alertService: AlertService,
     private platform: Platform,
     private storage: NativeStorage,
-    private navCtrl: NavController
+    private navCtrl: NavController,
+    public dialog: MatDialog
   ) {
     this.menu.enable(true);
   }
@@ -188,16 +192,20 @@ export class DashboardPage implements OnInit {
 
     this.b_code = [
       { id: 2, code: "ACCT_z6a4tsvupmoo0hz" },
+      { id: 3, code: "ACCT_z6a4tsvupmoo0hz" },
       { id: 4, code: "ACCT_93q2vycqxrg4nau" },
       { id: 5, code: "ACCT_ahye96qmminhs36" },
-      { id: 6, code: "ACCT_88vzjvjeskbfe39" },
+      { id: 6, code: "ACCT_jpd6kcd4n8t9zu5" },
       { id: 8, code: "ACCT_8p45z039s2inwwe" },
       { id: 9, code: "ACCT_88vzjvjeskbfe39" },
       { id: 11, code: "ACCT_w3ola5amahnl7mc" },
       { id: 12, code: "ACCT_fmntykscho1l47g" },
-      { id: 13, code: "ACCT_fmntykscho1l47g" },
-      { id: 14, code: "ACCT_fmntykscho1l47g" },
-      { id: 15, code: "ACCT_93q2vycqxrg4nau" }
+      { id: 13, code: "ACCT_7rnedh9mxiz1oc6" },
+      { id: 14, code: "ACCT_5ozavs8mu7439jr" },
+      { id: 15, code: "ACCT_iljpbd8m7rd72yw" },
+      { id: 16, code: "ACCT_iljpbd8m7rd72yw" },
+      { id: 17, code: "ACCT_93q2vycqxrg4nau" },
+      { id: 18, code: "ACCT_93q2vycqxrg4nau" }
     ];
 
     this.sixthFormGroup = this._formBuilder.group({
@@ -245,6 +253,25 @@ export class DashboardPage implements OnInit {
       downPayment: [{ value: 0.0, disabled: true }, Validators.required],
       enterAmount: [0.0, Validators.required]
     });
+  }
+
+  confirmDialog(stepper: MatStepper): void {
+    const message = `Are you sure the customer made transfer?`;
+
+    const dialogData = new ConfirmDialogModel("Confirm Transfer", message);
+
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      maxWidth: "400px",
+      data: dialogData
+    });
+
+    dialogRef.afterClosed().subscribe(dialogResult => {
+      this.result = dialogResult;
+      if (this.result){
+       this.transferDone(stepper)
+      }
+    });
+
   }
 
   ionViewWillEnter() {
@@ -375,6 +402,36 @@ export class DashboardPage implements OnInit {
                     console.log(res);
                     // }
                   });
+                  if (!(this.secondFormGroup.value.sector === 'formal')){ 
+                    this.seventhFormGroup = this._formBuilder.group({
+                      salaryDay: [
+                        { value: null, disabled: true },
+                        Validators.required,],
+                      salaryDay2: [
+                        { value: null, disabled: true },
+                        Validators.required,],
+                      salaryDay3: [
+                        { value: null, disabled: true },
+                        Validators.required,],
+                      salaryProof: ["", Validators.required],
+                      guarantorSigned: ["", Validators.required],
+                      addressVisited: ["", Validators.required],
+                      creditReport: ["", Validators.required],
+                      creditPoints: ["", Validators.required]
+                  });
+                } else {
+                  this.seventhFormGroup = this._formBuilder.group({
+                    salaryDay: ["", [Validators.required, Validators.min(this.minNum), Validators.max(this.maxNum)]],
+                    salaryDay2: ["", [Validators.required, Validators.min(this.minNum), Validators.max(this.maxNum)]],
+                    salaryDay3: ["", [Validators.required, Validators.min(this.minNum), Validators.max(this.maxNum)]],
+                    salaryProof: ["", Validators.required],
+                    guarantorSigned: ["", Validators.required],
+                    addressVisited: ["", Validators.required],
+                    creditReport: ["", Validators.required],
+                    creditPoints: ["", Validators.required]
+                  });
+              
+                }
                 stepper.next();
               } else {
                 this.alertService.presentToast(
@@ -390,7 +447,7 @@ export class DashboardPage implements OnInit {
 
   checkProductSku(stepper: MatStepper) {
     this.authService
-      .comfirmProduct(this.thirdFormGroup.value.productSku)
+      .comfirmProduct(this.thirdFormGroup.value.productSku.toUpperCase())
       .subscribe(result => {
         console.log(result);
         this.productData = result;
@@ -447,15 +504,15 @@ export class DashboardPage implements OnInit {
           this.authService.pushDDdata(
             this.firstFormGroup.value.customerId,
             this.computeR(this.lastReceipt),
-            this.seventhFormGroup.value.salaryDay,
-            this.seventhFormGroup.value.salaryDay2,
-            this.seventhFormGroup.value.salaryDay3,
+            (this.seventhFormGroup.value.salaryDay) ? this.seventhFormGroup.value.salaryDay : null,
+            (this.seventhFormGroup.value.salaryDay2) ? this.seventhFormGroup.value.salaryDay2 : null,
+            (this.seventhFormGroup.value.salaryDay3) ? this.seventhFormGroup.value.salaryDay3 : null,
             this.seventhFormGroup.value.salaryProof,
             this.seventhFormGroup.value.guarantorSigned,
             this.seventhFormGroup.value.addressVisited,
             this.seventhFormGroup.value.creditReport,
             this.seventhFormGroup.value.creditPoints,
-            (this.secondFormGroup.value.sector = 'formal') ? 1 : 0
+            (this.secondFormGroup.value.sector == 'formal') ? 1 : 0
           ).subscribe(res => {
             if (res) {
               this.pushauthCode(
@@ -474,6 +531,7 @@ export class DashboardPage implements OnInit {
   computeR(rec: any) {
     var prefx = [
       { id: 2, pre: "APCH" },
+      { id: 3, pre: "APDU" },
       { id: 4, pre: "APIW" },
       { id: 5, pre: "APAG" },
       { id: 6, pre: "APBO" },
@@ -483,9 +541,10 @@ export class DashboardPage implements OnInit {
       { id: 12, pre: "APTA" },
       { id: 13, pre: "APOW" },
       { id: 14, pre: "APOG" },
-      { id: 15, pre: "AAIW" },
-      { id: 16, pre: "APYO" },
-      { id: 17, pre: "APFU" }
+      { id: 15, pre: "APYO" },
+      { id: 16, pre: "APFU" },
+      { id: 17, pre: "AAAL" },
+      { id: 18, pre: "AAIY" }
     ];
 
     var nR: any, rec_dd: any, prefix: any, r: any;
@@ -720,7 +779,7 @@ export class DashboardPage implements OnInit {
     this.order.p_date = date;
     this.order.custp_id = this.firstFormGroup.value.customerId;
     this.order.p_reciept = this.computeR(this.lastReceipt);
-    this.order.product_sku = this.thirdFormGroup.value.productSku;
+    this.order.product_sku = this.thirdFormGroup.value.productSku.toUpperCase();
     this.order.product_price = this.sixthFormGroup.value.totalPrice;
 
     if (this.amount == Number(this.sixthFormGroup.value.downPayment + "00")) {
@@ -781,6 +840,14 @@ export class DashboardPage implements OnInit {
         this.lastReceipt = "";
         stepper.reset();
         this.ngOnInit();
+        this.firstFormGroup.reset;
+        this.secondFormGroup.reset;
+        this.thirdFormGroup.reset;
+        this.fourthFormGroup.reset;
+        this.fifthFormGroup.reset;
+        this.sixthFormGroup.reset;
+        this.seventhFormGroup.reset;
+
         
       }
     });
