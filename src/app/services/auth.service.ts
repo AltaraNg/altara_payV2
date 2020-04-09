@@ -22,6 +22,7 @@ export class AuthService {
   isProductValid = false;
   id: any;
   branch_id: any;
+  key:any;
 
 
   constructor(
@@ -145,8 +146,8 @@ export class AuthService {
     )
   }
 
-  createCustomer(id: Number, email: String, firstName: String, lastName: String, phoneNo: String) {
-    let tokenStr = 'sk_live_b7171d72637';
+  createCustomer(id: Number, email: String, firstName: String, lastName: String, phoneNo: String, key:string) {
+    let tokenStr = key;
     let headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${tokenStr}`
@@ -268,8 +269,18 @@ export class AuthService {
     )
   }
 
-  generateAuthKey(ref: any) {
-    let tokenStr = 'sk_live_b2b01d72637';
+  getkey(key_type){
+    return this.http.post(this.env.API_URL + 'dd_k',
+      { key_type: key_type }
+    ).pipe(
+      tap(data => {
+        return data;
+      })
+    )
+  }
+
+  generateAuthKey(ref: any, key) {
+    let tokenStr = key;
     return this.http.get(this.env.PAYSTACK_CUSTOMER_VERIFY + ref + "", { headers: { "Authorization": `Bearer ${tokenStr}` } }
     ).pipe(
       tap(data => {

@@ -105,6 +105,9 @@ export class DashboardPage implements OnInit {
   lastReceipt: any;
   transfer: boolean = false;
   result: string = '';
+  key:any;
+  sKey:any;
+  pKey:any;
 
   constructor(
     private _formBuilder: FormBuilder,
@@ -275,12 +278,29 @@ export class DashboardPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    // this.authService.user().subscribe(
-    //   user => {
-    //     this.user = user;
-    //   }
-    // );
+    this.getPkey('public');
+    this.getSkey('secret');
   }
+
+    getPkey(key_type:string){
+      this.authService.getkey(key_type).subscribe(
+        key => {
+         this.key = key;
+         
+         this.pKey = this.key.checklist[0].key;
+        }
+      );
+    }
+
+    getSkey(key_type:string){
+      this.authService.getkey(key_type).subscribe(
+        key => {
+         this.key = key;
+         this.sKey = this.key.checklist[0].key;
+        }
+      );
+    }
+
 
   Clicked() {
     this.transfer = !this.transfer;
@@ -294,12 +314,10 @@ export class DashboardPage implements OnInit {
     this.authService
       .comfirmId(this.firstFormGroup.value.customerId)
       .subscribe(result => {
-        console.log(result);
         this.customerData = result;
         if (this.customerData.checklist.length === 0) {
           this.alertService.presentToast("Invalid Customer ID");
         } else {
-          console.log(this.customerData.checklist[0].email);
           this.secondFormGroup = this._formBuilder.group({
             email: [this.customerData.checklist[0].email, Validators.required],
             first_name: [
@@ -348,7 +366,6 @@ export class DashboardPage implements OnInit {
   // 130-0796-CHE-ELO-AP
 
   confirmDocData(stepper: MatStepper) {
-    console.log(this.seventhFormGroup.value);
     stepper.next();
   }
 
@@ -369,7 +386,6 @@ export class DashboardPage implements OnInit {
         this.secondFormGroup.value.household
       )
       .subscribe(result => {
-        console.log(result);
         this.update = result;
         this.isUpdated = this.update.error;
         if (this.isUpdated == false) {
@@ -383,10 +399,11 @@ export class DashboardPage implements OnInit {
               this.secondFormGroup.value.email,
               this.secondFormGroup.value.first_name,
               this.secondFormGroup.value.last_name,
-              this.secondFormGroup.value.phoneNo
+              this.secondFormGroup.value.phoneNo,
+              this.sKey
             )
             .subscribe(response => {
-              console.log(response);
+              // console.log(response);
               this.dataToSave = response;
               if (this.dataToSave != {}) {
                 this.alertService.presentToast(
@@ -399,7 +416,7 @@ export class DashboardPage implements OnInit {
                   )
                   .subscribe(res => {
                     // if (res) {
-                    console.log(res);
+                    // console.log(res);
                     // }
                   });
                   if (!(this.secondFormGroup.value.sector === 'formal')){ 
@@ -449,12 +466,12 @@ export class DashboardPage implements OnInit {
     this.authService
       .comfirmProduct(this.thirdFormGroup.value.productSku.toUpperCase())
       .subscribe(result => {
-        console.log(result);
+        // console.log(result);
         this.productData = result;
         if (this.productData.users.length === 0) {
           this.alertService.presentToast("Product Not Available");
         } else {
-          console.log(this.productData.users[0].product_name);
+          // console.log(this.productData.users[0].product_name);
           this.productPrice = this.productData.users[0].pc_pprice;
           // this.sixthFormGroup.get('productName').setValue(this.productData.users[0].product_name);
           this.productName = this.productData.users[0].product_name;
@@ -475,11 +492,11 @@ export class DashboardPage implements OnInit {
 
   processBankcode() {
     this.authService.getBranchId().then(() => {
-      console.log(this.authService.branch_id);
+      // console.log(this.authService.branch_id);
       this.b_code.forEach(element => {
         if (element.id == Number(this.authService.branch_id)) {
           this.sub_acct = element.code;
-          console.log(this.sub_acct);
+          // console.log(this.sub_acct);
         }
       });
     });
@@ -491,7 +508,7 @@ export class DashboardPage implements OnInit {
     this.authService.getBranchId().then(() => {
       this.authService.getLastreceipt().subscribe(result => {
         re = result;
-        console.log(re);
+        // console.log(re);
         if (re.id.length == 0) {
           this.lastReceipt = '';
         }
@@ -728,7 +745,7 @@ export class DashboardPage implements OnInit {
   }
 
   paymentDone($event, stepper: MatStepper) {
-    this.authService.generateAuthKey(this.ref).subscribe(result => {
+    this.authService.generateAuthKey(this.ref, this.sKey).subscribe(result => {
       console.log(result);
       this.verifyData = result;
       if (result) {

@@ -50,7 +50,7 @@
       </ng-template>
     
       <ion-button  size="small" expand="block" color="primary" angular4-paystack
-        [key]="'pk_live_adad9aed8aa59730d64d0bed26226427b65de8a7'" [email]="email"
+        [key]="pKey" [email]="email"
         [amount]="10000" [ref]="ref" [subaccount]="ACCT_z6a4tsvupmoo0hz" [channels]="['card']" [class]="'btn btn-primary'"
         (close)="paymentCancel(stepper)" (callback)="paymentDone($event,stepper)">Pay
       </ion-button>

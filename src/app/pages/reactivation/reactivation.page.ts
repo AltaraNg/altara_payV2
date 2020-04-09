@@ -27,6 +27,9 @@ export class ReactivationPage implements OnInit {
   orderIds:any;
   email:string;
   ref: any;
+  key:any;
+  sKey:any;
+  pKey:any;
   constructor(
     private _formBuilder: FormBuilder,
     private menu: MenuController,
@@ -46,6 +49,29 @@ export class ReactivationPage implements OnInit {
       id: ["", Validators.required]
     });
   }
+
+  ionViewWillEnter() {
+    this.getPkey('public');
+    this.getSkey('secret');
+  }
+
+    getPkey(key_type:string){
+      this.authService.getkey(key_type).subscribe(
+        key => {
+         this.key = key;
+         this.pKey = this.key.checklist[0].key;
+        }
+      );
+    }
+
+    getSkey(key_type:string){
+      this.authService.getkey(key_type).subscribe(
+        key => {
+         this.key = key;
+         this.sKey = this.key.checklist[0].key;
+        }
+      );
+    }
 
   checkId(stepper: MatStepper) {
     this.authService
@@ -98,7 +124,7 @@ export class ReactivationPage implements OnInit {
 
   paymentDone($event, stepper: MatStepper) {
     var verifyData;
-    this.authService.generateAuthKey(this.ref).subscribe(result => {
+    this.authService.generateAuthKey(this.ref, this.sKey).subscribe(result => {
       console.log(result);
       verifyData = result;
       if (result) {
