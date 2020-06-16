@@ -125,8 +125,6 @@
       </form>
     </mat-step>
 
-
-
     <mat-step [stepControl]="seventhFormGroup">
       <form [formGroup]="seventhFormGroup">
         <ng-template matStepLabel>Verification/Collection Data</ng-template>
@@ -163,7 +161,7 @@
               <mat-form-field>
                 <mat-select matNativeControl formControlName="guarantorSigned" required>
                   <mat-option value="">Guarantor Signed?</mat-option>
-                  <mat-option *ngFor="let signed of ['Yes','No'];" [value]="signed"> {{signed}}
+                  <mat-option *ngFor="let signed of ['2 - Yes','1 - Yes','No'];" [value]="signed"> {{signed}}
                   </mat-option>
                 </mat-select>
               </mat-form-field>
@@ -220,6 +218,7 @@
         </div>
       </form>
     </mat-step>
+
     <mat-step [stepControl]="fourthFormGroup">
       <form [formGroup]="fourthFormGroup">
         <ng-template matStepLabel>Select Sales Type and Plan</ng-template>
@@ -236,9 +235,16 @@
         </mat-form-field>
         <hr>
         <mat-form-field>
-          <mat-select matNativeControl formControlName="salePlan" required>
+          <mat-select matNativeControl formControlName="salePlan"  required>
+            <mat-option value="">Select Sales </mat-option>
+            <mat-option *ngFor="let plan of salePlans;" [value]="plan.type"> {{plan.type}} </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <hr>
+        <mat-form-field>
+          <mat-select matNativeControl formControlName="saleDetail"  required>
             <mat-option value="">Select Sales Plan</mat-option>
-            <mat-option *ngFor="let plan of salePlans;" [value]="plan.id"> {{plan.name}} </mat-option>
+            <mat-option *ngFor="let plan of saleDetails;" [value]="plan.id"> {{plan.name}} </mat-option>
           </mat-select>
         </mat-form-field>
         <div>
@@ -254,7 +260,17 @@
       <ion-grid>
         <!-- <ion-row color="primary" justify-content-center>
           <ion-col align-self-center size-md="6" size-lg="5" size-xs="12"> -->
-        <ion-row color="primary">
+            <ion-row color="primary">
+              <ion-col>
+                <mat-form-field>
+                  <input matInput placeholder="Receipt Number" [(ngModel)]="nextReciept" [disabled]="receiptText" required>
+                  <small style="color:red">enable edit <ion-toggle  (ionChange)="enable()"></ion-toggle></small>
+                </mat-form-field>
+                
+              </ion-col>
+            </ion-row>
+        
+            <ion-row color="primary">
           <ion-col>
             Name
           </ion-col>
@@ -275,7 +291,7 @@
             Sale Plan
           </ion-col>
           <ion-col>
-            {{salePlan}}
+            {{saleDetail}}
           </ion-col>
         </ion-row>
         <ion-row color="primary">
@@ -292,7 +308,7 @@
             Repayment
           </ion-col>
           <ion-col>
-            {{sixthFormGroup.value.repaymentPrice | currency:'NGN' }}
+            {{sixthFormGroup.value.repaymentPrice | currency:'NGN'}}
           </ion-col>
         </ion-row>
 
@@ -352,6 +368,7 @@
       <!-- </div> -->
       <div>
         <button mat-button matStepperPrevious>Back</button>
+        <button mat-button  (click)="resetForm(stepper)">Reset Form</button>
       </div>
     </mat-step>
   </mat-vertical-stepper>
