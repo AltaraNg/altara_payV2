@@ -14,10 +14,10 @@
    <button mat-raised-button (click)="reactivate()" id="toggle-linear">
    <strong>Reactivate Customer >></strong> 
   </button>
-
+<!-- 
    <button mat-raised-button (click)="isLinear = !isLinear" id="toggle-linear">
     {{!isLinear ? 'Enable linear mode' : 'Disable linear mode'}}
-  </button>  
+  </button>   -->
   <app-loading></app-loading>
   <mat-vertical-stepper [linear]="isLinear" #stepper>
     <mat-step [stepControl]="firstFormGroup">
