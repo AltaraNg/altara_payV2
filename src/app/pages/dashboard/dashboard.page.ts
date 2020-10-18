@@ -826,7 +826,7 @@ illustratedPrice(wPrice, plan, month,type){
             }
       
             this.sixthFormGroup = this._formBuilder.group({
-              repaymentPrice: [Math.floor(mRepay/100)*100],
+              repaymentPrice: [(Math.floor(mRepay/100)*100)*2],
               totalPrice: [newTax],
               downPayment: [downP]
             });
@@ -844,7 +844,7 @@ illustratedPrice(wPrice, plan, month,type){
             }
       
             this.sixthFormGroup = this._formBuilder.group({
-              repaymentPrice: [Math.floor(mRepay/100)*100],
+              repaymentPrice: [(Math.floor(mRepay/100)*100)*2],
               totalPrice: [newTax],
               downPayment: [downP]
             });
