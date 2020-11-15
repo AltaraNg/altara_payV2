@@ -42,7 +42,7 @@ export class DashboardPage implements OnInit {
   salePlanInterest: any;
   salePlanMargin: any;
   salePlanPeriod: any;
-
+  salesType:any;
   productForm = new FormGroup({
     name: new FormControl(""),
     type: new FormControl(""),
@@ -144,7 +144,7 @@ export class DashboardPage implements OnInit {
     this.salePlans = [
       { type : 'Products',
       details: [
-   { 
+          { 
            id: 1,
            name: "6 month plan 0%",
            period: 6,
@@ -192,11 +192,19 @@ export class DashboardPage implements OnInit {
    {
       type : 'Cash Loan',
       details:[{
-           id: 1,
-           name: "6 month - 20% equity",
-           period: 6,
-           percent: 20
-         }]
+        id: 1,
+        name: "6 month - 20% equity(still have product)",
+        period: 6,
+        percent: 20,
+        type:'haveProduct',
+
+      },{
+        id: 2,
+        name: "6 month - 20% equity(w/o product)",
+        period: 6,
+        percent: 20,
+        type:'withoutProduct'
+      }]
    }   
        ];
 
@@ -640,6 +648,7 @@ export class DashboardPage implements OnInit {
         this.salePlanPercent = element.percent;
         this.salePlanPeriod = element.period;
         this.salesPlanId = element.id;
+        this.salesType=element.type;
       }
     });
 
@@ -652,7 +661,7 @@ export class DashboardPage implements OnInit {
     console.log(this.fourthFormGroup.value);
 
     if (this.thirdFormGroup.value) {
-      console.log(this.productPrice, this.salePlanPercent, this.salePlanPeriod,this.productType)
+      console.log(this.productPrice, this.salePlanPercent, this.salePlanPeriod,this.productType,this.salesType)
       // this.priceCal();
 this.illustratedPrice (this.productPrice, this.salePlanPercent, this.salePlanPeriod,this.productType);
 
@@ -720,7 +729,8 @@ let params = [
         
         {
             month: 6, pim: [
-                { plan: 20, int: 2.75, marg: 0 }
+              {type:'haveProduct', plan: 20, int: 2.75, marg: 0 },
+              {type:'withoutProduct', plan: 20, int: 3.15, marg: 0 },
 
             ]
         }
@@ -741,7 +751,8 @@ let params = [
         
         f_params = (type != 'Cash Loan')? params : cash_params;
 
-        f_params.forEach(element => {
+        if(type != 'Cash Loan'){
+          f_params.forEach(element => {
             if (month == element.month) {
                 console.log(element.month)
                 element.pim.forEach(element2 => {
@@ -753,6 +764,20 @@ let params = [
                 });
             }
         });
+        }else{
+          f_params.forEach(element => {
+            if (month == element.month) {
+                console.log(element.month)
+                element.pim.forEach(element2 => {
+                    if (element2.type == this.salesType) {
+                        int = element2.int;
+                        margin = element2.marg;
+                        console.log('hopppppppi',element2.int, element2.marg);
+                    }
+                });
+            }
+        });
+        }
 
         var monthParam = (month == 12) ? 24 :  (month == 6)? 12 : 6 ;
         console.log(monthParam);
