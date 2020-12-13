@@ -175,14 +175,14 @@ export class DashboardPage implements OnInit {
            percent: 80
          },
          {
-           id: 6,
-           name: "3 month plan 20%",
+          id: 2,
+          name: "3 month plan 20%",
            period: 3,
            percent: 20
          },
          {
-           id: 7,
-           name: "3 month plan 40%",
+          id: 3,
+          name: "3 month plan 40%",
            period: 3,
            percent: 40
          }
