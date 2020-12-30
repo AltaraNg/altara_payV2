@@ -47,7 +47,7 @@ import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.componen
     StatusBar,
     LoaderService,
     SplashScreen,
-    { provide: HTTP_INTERCEPTORS, useClass: LoaderInterceptor, multi: true },
+    // { provide: HTTP_INTERCEPTORS, useClass: LoaderInterceptor, multi: true },
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     NativeStorage,
   ],

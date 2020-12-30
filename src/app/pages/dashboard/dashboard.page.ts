@@ -14,6 +14,8 @@ import { MatStepper } from "@angular/material/stepper";
 import { AlertService } from "../../services/alert.service";
 import { NativeStorage } from "@ionic-native/native-storage/ngx";
 import { Platform } from "@ionic/angular";
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { EnvService } from "src/app/services/env.service";
 @Component({
   selector: "app-dashboard",
   templateUrl: "./dashboard.page.html",
@@ -60,6 +62,7 @@ export class DashboardPage implements OnInit {
   fifthFormGroup: FormGroup;
   sixthFormGroup: FormGroup;
   seventhFormGroup: FormGroup;
+  eightFormGroup:FormGroup;
   isUpdated: boolean = true;
   customerData: any;
   update: any;
@@ -113,8 +116,23 @@ export class DashboardPage implements OnInit {
   nextReciept:any;
   productType:any;
   receiptText:boolean=true;
-  salesPlanId:any;
+  salesPlanId:any;  
+  myControl = new FormControl();
+  repaymentDuration: any;
+  repaymentCyclesopt: any;
+  downPaymentRates: any;
+  businessTypes: any;
+  paymentMethods: any;
+  banks: any;
+  
+  repayment_duration: any;
+  repayment_cyclesopt: any;
+  downPayment_rate: any;
+  business_type: any;
+  payment_method: any;
+  bank: any;
 
+  options: any = [];
   constructor(
     private _formBuilder: FormBuilder,
     private menu: MenuController,
@@ -123,9 +141,20 @@ export class DashboardPage implements OnInit {
     private platform: Platform,
     private storage: NativeStorage,
     private navCtrl: NavController,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private http: HttpClient,
+    private env: EnvService,
+
   ) {
     this.menu.enable(true);
+    this.getRepaymentCycle();
+    this.getRepaymentDuration();
+    this.getDownPaymentRates();
+    this.getBusinessTypes();
+    this.getBanks();
+    this.getPaymentMethod();
+
+    console.log('=====>', this.repaymentCyclesopt);
   }
 
   ngOnInit() {
@@ -242,6 +271,14 @@ export class DashboardPage implements OnInit {
       creditReport: ["", Validators.required],
       creditPoints: ["", Validators.required]
     });
+    this.eightFormGroup=this._formBuilder.group({
+      repayment_duration_id: ["", Validators.required],
+      repayment_cycle_id: ["", Validators.required],
+      business_type_id: ["", Validators.required],
+      payment_type_id: ["", Validators.required],
+      bank_id: ["", Validators.required],
+      payment_method_id: ["", Validators.required]
+    });
 
     this.firstFormGroup = this._formBuilder.group({
       customerId: ["", Validators.required]
@@ -275,7 +312,7 @@ export class DashboardPage implements OnInit {
 
     this.onChanges();
   }
-
+  
   confirmDialog(stepper: MatStepper): void {
     const message = `Are you sure the customer made transfer?`;
 
@@ -422,6 +459,7 @@ export class DashboardPage implements OnInit {
       )
       .subscribe(result => {
         this.update = result;
+        console.log('debug ',this.update);
         this.isUpdated = this.update.error;
         if (this.isUpdated == false) {
           // create customer in paystack
@@ -450,9 +488,9 @@ export class DashboardPage implements OnInit {
                     this.dataToSave.data.customer_code
                   )
                   .subscribe(res => {
-                    // if (res) {
-                    // console.log(res);
-                    // }
+                    if (res) {
+                    console.log(res);
+                    }
                   });
                   if (!(this.secondFormGroup.value.sector === 'formal')){ 
                     this.seventhFormGroup = this._formBuilder.group({
@@ -498,34 +536,33 @@ export class DashboardPage implements OnInit {
   }
 
   checkProductSku(stepper: MatStepper) {
-    this.authService
-      .comfirmProduct(this.thirdFormGroup.value.productSku.toUpperCase())
-      .subscribe(result => {
-        // console.log(result);
-        this.productData = result;
-        if (this.productData.users.length === 0) {
+    // this.authService
+    //   .comfirmProduct(this.thirdFormGroup.value.productSku)
+    //   .subscribe(result => {
+    //     // console.log(result);
+    //     this.productData = result;
+        if (this.productData.length === 0) {
           this.alertService.presentToast("Product Not Available");
         } else {
-          this.nextReciept = this.computeR(this.lastReceipt);
+          // this.nextReciept = this.computeR(this.lastReceipt);
           // console.log(this.productData.users[0].product_name);
-          this.productPrice = this.productData.users[0].pc_pprice;
+          this.productPrice = this.productData.price;
           // this.sixthFormGroup.get('productName').setValue(this.productData.users[0].product_name);
-          this.productName = this.productData.users[0].product_name;
-          this.platform.ready().then(() => {
-            this.storage
-              .setItem("branch_id", this.productData.users[0].store_name)
-              .then(
-                () => {
-                  console.log("branch ID Stored");
-                },
-                error => console.error("Error storing item", error)
-              );
-          });
+          this.productName = this.productData.product_name;
+          // this.platform.ready().then(() => {
+          //   this.storage
+          //     .setItem("branch_id", this.productData.users[0].store_name)
+          //     .then(
+          //       () => {
+          //         console.log("branch ID Stored");
+          //       },
+          //       error => console.error("Error storing item", error)
+          //     );
+          // });
           stepper.next();
         }
-      });
-  }
-
+      }
+  
   processBankcode() {
     this.authService.getBranchId().then(() => {
       // console.log(this.authService.branch_id);
@@ -540,8 +577,10 @@ export class DashboardPage implements OnInit {
 
   saveData(stepper: MatStepper, transfer: boolean) {
     var re: any;
+
     var auth_code = (transfer == false) ? this.verifyData.data.authorization.authorization_code : null; 
-          this.authService.pushDDdata(
+         this.createOrder();
+    this.authService.pushDDdata(
             this.firstFormGroup.value.customerId,
             this.nextReciept,
             (this.seventhFormGroup.value.salaryDay) ? this.seventhFormGroup.value.salaryDay : null,
@@ -669,6 +708,17 @@ this.illustratedPrice (this.productPrice, this.salePlanPercent, this.salePlanPer
     } else {
       stepper.previous();
     }
+  }
+
+  nextStep(stepper: MatStepper) {
+   
+    console.log(this.eightFormGroup.value);
+    if (this.eightFormGroup.value) {
+      stepper.next();
+    } else {
+      stepper.previous();
+    }
+    
   }
  
   makePayment(stepper: MatStepper) {
@@ -1064,4 +1114,129 @@ illustratedPrice(wPrice, plan, month,type){
         this.seventhFormGroup.reset;
   }
 
+
+  keyPress(event: KeyboardEvent) {
+    console.log('event event ',this.thirdFormGroup.value.productSku);
+    this.authService
+      .comfirmProduct(this.thirdFormGroup.value.productSku)
+      .subscribe( async (res: any) =>{
+        this.options = res.data.data;
+        console.log('optionsoptionsoptionsoptions ', res.data.data);
+        if (this.options.length === 0) {
+          this.alertService.presentToast("Product Not Available");
+        }
+      },error => {
+        console.log(error);
+      });
+  }
+
+  selectedItem(data){
+
+    console.log('data ',data);
+    this.productData=data;
+  }
+
+  getRepaymentCycle() {
+    console.log('data getRepaymentCycle ===> ');
+
+    let headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${localStorage.getItem('token')}`
+    });
+    let options = { headers: headers };
+    return this.http.get(this.env.NEW_API_URL + '/api/repayment_cycle',options
+    ).subscribe((res)=>{
+      this.repaymentCyclesopt =res['data']['data'];
+    })
+  }
+
+  getRepaymentDuration() {
+    console.log('data getRepaymentDuration ===> ');
+
+    let headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${localStorage.getItem('token')}`
+    });
+    let options = { headers: headers };
+    return this.http.get(this.env.NEW_API_URL + '/api/repayment_duration',options
+    ).subscribe((res)=>{
+      this.repaymentDuration =res['data']['data'];
+    })
+  }
+
+  getDownPaymentRates() {
+    console.log('data getDownPaymentRates ===> ');
+    let headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${localStorage.getItem('token')}`
+    });
+    let options = { headers: headers };
+    return this.http.get(this.env.NEW_API_URL + '/api/down_payment_rate',options
+    ).subscribe((res)=>{
+             this.downPaymentRates =res['data']['data'];
+    })
+  }
+
+  getBusinessTypes() {
+    console.log('data getBusinessTypesRates ===> ');
+    let headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${localStorage.getItem('token')}`
+    });
+    let options = { headers: headers };
+    return this.http.get(this.env.NEW_API_URL + '/api/business_type',options
+    ).subscribe((res)=>{
+      this.businessTypes =res['data']['data'];
+    })
+  }
+
+  getPaymentMethod() {
+    console.log('data getPaymentMethod ===> ');
+    let headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${localStorage.getItem('token')}`
+    });
+    let options = { headers: headers };
+    return this.http.get(this.env.NEW_API_URL + '/api/payment_method',options
+    ).subscribe((res)=>{
+      this.paymentMethods =res['paymentMethods'];
+      console.log('===> payment_method <=== ',res)
+    })
+  }
+  getBanks() {
+    console.log('data getPaymentMethod ===> ');
+    let headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${localStorage.getItem('token')}`
+    });
+    let options = { headers: headers };
+    return this.http.get(this.env.NEW_API_URL + '/api/bank',options
+    ).subscribe((res)=>{
+      console.log('===> banks <=== ',res)
+
+      this.banks =res['banks'];
+    })
+  }
+
+  createOrder() {
+    let headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${localStorage.getItem('token')}`
+    });
+    let options = { headers: headers };
+
+    const data ={
+      ...this.eightFormGroup.value,
+      "customer_id":this.firstFormGroup.value.customerId,
+      "inventory_id": this.productData.id,
+      "branch_id": localStorage.getItem('branchId'),
+      "down_payment": this.sixthFormGroup.value.downPayment,
+      "repayment": this.sixthFormGroup.value.repaymentPrice,
+      "product_price": this.productData.price,
+    }
+    return this.http.post(this.env.NEW_API_URL + '/api/new_order',data,options
+    ).subscribe((res)=>{
+      console.log(' ===> createOrder <=== ',res);
+    })
+  }
 }
