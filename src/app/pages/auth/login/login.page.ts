@@ -4,6 +4,7 @@ import { RegisterPage } from '../register/register.page';
 import { NgForm } from '@angular/forms';
 import { AuthService } from '../../../services/auth.service';
 import { AlertService } from '../../../services/alert.service';
+import { LoaderService } from 'src/app/loader.service';
 
 @Component({
   selector: 'app-login',
@@ -16,7 +17,9 @@ export class LoginPage implements OnInit {
     private modalController: ModalController,
     private authService: AuthService,
     private navCtrl: NavController,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private ionLoader: LoaderService
+
   ) { }
 
 
@@ -46,22 +49,20 @@ export class LoginPage implements OnInit {
   // }
 
   login(form: NgForm) {
+    if (form.value.email === "" || form.value.password === ""){
+      return  this.alertService.presentToast("Kindly enter your login details.");
+    }
+    this.ionLoader.showLoader();
     this.authService.login(form.value.email, form.value.password).subscribe(
       data => {
-        console.log(data);
-        if (data === undefined){
-          this.alertService.presentToast("Wrong Credentials");
-        }
-        else {
+        this.ionLoader.hideLoader();
           this.alertService.presentToast("Logged In");
-        }
+          this.navCtrl.navigateRoot('/dashboard');
       },
-      error => {
-        console.log(error);
-      },
-      () => {
-        // this.dismissLogin();
-        this.navCtrl.navigateRoot('/dashboard');
+      error => { this.ionLoader.hideLoader();          
+        this.alertService.presentToast("Wrong Credentials");
+
+        console.error('===> error <=== ',error);
       }
     );
   }
