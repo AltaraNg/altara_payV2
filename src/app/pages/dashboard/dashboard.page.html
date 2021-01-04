@@ -294,12 +294,12 @@
                         <mat-option *ngFor="let plan of paymentMethods;" [value]="plan.id"> {{plan.name}} </mat-option>
                     </mat-select>
                 </mat-form-field>
-                <hr>
+                <!-- <hr>
                 <mat-form-field>
                     <mat-select matNativeControl placeholder="Bank" formControlName="bank_id" required>
                         <mat-option *ngFor="let plan of banks;" [value]="plan.id"> {{plan.name}} </mat-option>
                     </mat-select>
-                </mat-form-field>
+                </mat-form-field> -->
                 <div>
                     <button mat-button matStepperPrevious>Back</button>
                     <button (click)="nextStep(stepper)" mat-button>Next</button>

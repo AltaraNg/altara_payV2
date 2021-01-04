@@ -16,6 +16,8 @@ import { NativeStorage } from "@ionic-native/native-storage/ngx";
 import { Platform } from "@ionic/angular";
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { EnvService } from "src/app/services/env.service";
+import { tap, map } from 'rxjs/operators';
+
 @Component({
   selector: "app-dashboard",
   templateUrl: "./dashboard.page.html",
@@ -276,7 +278,6 @@ export class DashboardPage implements OnInit {
       repayment_cycle_id: ["", Validators.required],
       business_type_id: ["", Validators.required],
       payment_type_id: ["", Validators.required],
-      bank_id: ["", Validators.required],
       payment_method_id: ["", Validators.required]
     });
 
@@ -340,9 +341,9 @@ export class DashboardPage implements OnInit {
     getPkey(key_type:string){
       this.authService.getkey(key_type).subscribe(
         key => {
-         this.key = key;
+         this.key = key['data'].find((data)=> data.name === key_type);
          
-         this.pKey = this.key.checklist[0].key;
+         this.pKey = this.key.key;
         }
       );
     }
@@ -350,8 +351,8 @@ export class DashboardPage implements OnInit {
     getSkey(key_type:string){
       this.authService.getkey(key_type).subscribe(
         key => {
-         this.key = key;
-         this.sKey = this.key.checklist[0].key;
+          this.key = key['data'].find((data)=> data.name === key_type);
+          this.sKey = this.key.key;
         }
       );
     }
@@ -579,29 +580,33 @@ export class DashboardPage implements OnInit {
     var re: any;
 
     var auth_code = (transfer == false) ? this.verifyData.data.authorization.authorization_code : null; 
-         this.createOrder();
-    this.authService.pushDDdata(
-            this.firstFormGroup.value.customerId,
-            this.nextReciept,
-            (this.seventhFormGroup.value.salaryDay) ? this.seventhFormGroup.value.salaryDay : null,
-            (this.seventhFormGroup.value.salaryDay2) ? this.seventhFormGroup.value.salaryDay2 : null,
-            (this.seventhFormGroup.value.salaryDay3) ? this.seventhFormGroup.value.salaryDay3 : null,
-            this.seventhFormGroup.value.salaryProof,
-            this.seventhFormGroup.value.guarantorSigned,
-            this.seventhFormGroup.value.addressVisited,
-            this.seventhFormGroup.value.creditReport,
-            this.seventhFormGroup.value.creditPoints,
-            (this.secondFormGroup.value.sector == 'formal') ? 1 : 0
-          ).subscribe(res => {
-            if (res) {
-              this.pushauthCode(
-                this.nextReciept,
-                auth_code,
-                // Math.floor(Math.random() * 1000),
-                stepper
-              );
-            }
-          });
+         this.createOrder().subscribe(res => {
+          const orderdata = res['data']['order_number'];
+          if (res) {
+            this.authService.pushDDdata(
+              this.firstFormGroup.value.customerId,
+              orderdata,
+              (this.seventhFormGroup.value.salaryDay) ? this.seventhFormGroup.value.salaryDay : null,
+              (this.seventhFormGroup.value.salaryDay2) ? this.seventhFormGroup.value.salaryDay2 : null,
+              (this.seventhFormGroup.value.salaryDay3) ? this.seventhFormGroup.value.salaryDay3 : null,
+              this.seventhFormGroup.value.salaryProof,
+              this.seventhFormGroup.value.guarantorSigned,
+              this.seventhFormGroup.value.addressVisited,
+              this.seventhFormGroup.value.creditReport,
+              this.seventhFormGroup.value.creditPoints,
+              (this.secondFormGroup.value.sector == 'formal') ? 1 : 0
+            ).subscribe(res => {
+              if (res) {
+                this.pushauthCode(
+                  orderdata,
+                  auth_code,
+                  // Math.floor(Math.random() * 1000),
+                  stepper
+                );
+              }
+            });
+          }
+        });
         }
 
 
@@ -1041,17 +1046,17 @@ illustratedPrice(wPrice, plan, month,type){
     console.log(this.order);
     let formData = this.toFormData(this.order);
 
-    this.authService.postOrder(formData).subscribe(result => {
-      if (result) {
-        console.log(result);
-        this.alertService.presentToast("Order Posted");
-        this.pushRepayment(stepper);
-      } else {
-        this.alertService.presentToast(
-          "Payment Made but an Issue occured, Contact Support"
-        );
-      }
-    });
+    // this.authService.postOrder(formData).subscribe(result => {
+    //   if (result) {
+    //     console.log(result);
+    //     this.alertService.presentToast("Order Posted");
+    //     this.pushRepayment(stepper);
+    //   } else {
+    //     this.alertService.presentToast(
+    //       "Payment Made but an Issue occured, Contact Support"
+    //     );
+    //   }
+    // });
   }
 
   addDays(date: Date, days: number) {
@@ -1186,7 +1191,7 @@ illustratedPrice(wPrice, plan, month,type){
     let options = { headers: headers };
     return this.http.get(this.env.NEW_API_URL + '/api/business_type',options
     ).subscribe((res)=>{
-      this.businessTypes =res['data']['data'];
+      this.businessTypes =res['data']['data'].filter((data)=> data.name.includes('Altara Pay'));
     })
   }
 
@@ -1199,7 +1204,7 @@ illustratedPrice(wPrice, plan, month,type){
     let options = { headers: headers };
     return this.http.get(this.env.NEW_API_URL + '/api/payment_method',options
     ).subscribe((res)=>{
-      this.paymentMethods =res['paymentMethods'];
+      this.paymentMethods =res['paymentMethods'].filter((data)=> data.name.includes('cash') || data.name.includes('transfer'));
       console.log('===> payment_method <=== ',res)
     })
   }
@@ -1233,10 +1238,13 @@ illustratedPrice(wPrice, plan, month,type){
       "down_payment": this.sixthFormGroup.value.downPayment,
       "repayment": this.sixthFormGroup.value.repaymentPrice,
       "product_price": this.productData.price,
+      "bank_id":1
     }
     return this.http.post(this.env.NEW_API_URL + '/api/new_order',data,options
-    ).subscribe((res)=>{
-      console.log(' ===> createOrder <=== ',res);
-    })
+    ).pipe(
+      tap(data => {
+        return data;
+      })
+    )
   }
 }
