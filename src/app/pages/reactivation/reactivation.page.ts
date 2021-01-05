@@ -58,8 +58,8 @@ export class ReactivationPage implements OnInit {
     getPkey(key_type:string){
       this.authService.getkey(key_type).subscribe(
         key => {
-         this.key = key;
-         this.pKey = this.key.checklist[0].key;
+          this.key = key['data'].find((data)=> data.name === key_type);
+          this.pKey = this.key.key;
         }
       );
     }
@@ -67,8 +67,8 @@ export class ReactivationPage implements OnInit {
     getSkey(key_type:string){
       this.authService.getkey(key_type).subscribe(
         key => {
-         this.key = key;
-         this.sKey = this.key.checklist[0].key;
+          this.key = key['data'].find((data)=> data.name === key_type);
+          this.sKey = this.key.key;
         }
       );
     }

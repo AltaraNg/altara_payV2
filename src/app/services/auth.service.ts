@@ -130,7 +130,7 @@ export class AuthService {
     });
     let options = { headers: headers };
     
-    return this.http.get(this.env.NEW_API_URL + `/api/inventory?productName=${productSku}`,
+    return this.http.get(this.env.NEW_API_URL + `/api/inventory?productName=${productSku}&isActive=true`,
     options
     ).pipe(
       tap(data => {
@@ -284,14 +284,15 @@ export class AuthService {
 
   getkey(key_type){
     // this.ionLoader.showLoader();
-
-    return this.http.post(this.env.API_URL + 'dd_k',
-      { key_type: key_type }
+    let headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${localStorage.getItem('token')}`
+    });
+    let options = { headers: headers };
+    return this.http.get(this.env.NEW_API_URL + '/api/dd_k',options
     ).pipe(
       tap(data => {    
-        // this.ionLoader.hideLoader();
-
-        return data;
+      return data;
       })
     )
   }
