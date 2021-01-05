@@ -278,7 +278,6 @@ export class DashboardPage implements OnInit {
       repayment_cycle_id: ["", Validators.required],
       business_type_id: ["", Validators.required],
       payment_type_id: ["", Validators.required],
-      payment_method_id: ["", Validators.required]
     });
 
     this.firstFormGroup = this._formBuilder.group({
@@ -604,6 +603,7 @@ export class DashboardPage implements OnInit {
                   stepper
                 );
               }
+              this.resetForm(stepper);
             });
           }
         });
@@ -1204,7 +1204,7 @@ illustratedPrice(wPrice, plan, month,type){
     let options = { headers: headers };
     return this.http.get(this.env.NEW_API_URL + '/api/payment_method',options
     ).subscribe((res)=>{
-      this.paymentMethods =res['paymentMethods'].filter((data)=> data.name.includes('cash') || data.name.includes('transfer'));
+      this.paymentMethods =res['paymentMethods'].filter((data)=> data.name.includes('direct-debit') || data.name.includes('transfer'));
       console.log('===> payment_method <=== ',res)
     })
   }
@@ -1217,9 +1217,8 @@ illustratedPrice(wPrice, plan, month,type){
     let options = { headers: headers };
     return this.http.get(this.env.NEW_API_URL + '/api/bank',options
     ).subscribe((res)=>{
-      console.log('===> banks <=== ',res)
-
-      this.banks =res['banks'];
+      console.log('===> banks <=== ',res);
+      this.banks = res['banks'];
     })
   }
 
@@ -1238,7 +1237,8 @@ illustratedPrice(wPrice, plan, month,type){
       "down_payment": this.sixthFormGroup.value.downPayment,
       "repayment": this.sixthFormGroup.value.repaymentPrice,
       "product_price": this.productData.price,
-      "bank_id":1
+      "bank_id":1,
+      "payment_method_id": this.transfer ? this.paymentMethods.find((data)=>data.name === 'transfer').id : this.paymentMethods.find((data)=>data.name === 'direct-debit').id ,
     }
     return this.http.post(this.env.NEW_API_URL + '/api/new_order',data,options
     ).pipe(
