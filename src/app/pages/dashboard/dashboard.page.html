@@ -288,12 +288,7 @@
                         <mat-option *ngFor="let plan of businessTypes;" [value]="plan.id"> {{plan.name}} </mat-option>
                     </mat-select>
                 </mat-form-field>
-                <hr>
-                <mat-form-field>
-                    <mat-select matNativeControl placeholder="Payment Method" formControlName="payment_method_id" required>
-                        <mat-option *ngFor="let plan of paymentMethods;" [value]="plan.id"> {{plan.name}} </mat-option>
-                    </mat-select>
-                </mat-form-field>
+
                 <!-- <hr>
                 <mat-form-field>
                     <mat-select matNativeControl placeholder="Bank" formControlName="bank_id" required>
