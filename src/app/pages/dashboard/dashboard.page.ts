@@ -46,7 +46,7 @@ export class DashboardPage implements OnInit {
   salePlanInterest: any;
   salePlanMargin: any;
   salePlanPeriod: any;
-  salesType:any;
+  salesType: any;
   productForm = new FormGroup({
     name: new FormControl(""),
     type: new FormControl(""),
@@ -64,7 +64,7 @@ export class DashboardPage implements OnInit {
   fifthFormGroup: FormGroup;
   sixthFormGroup: FormGroup;
   seventhFormGroup: FormGroup;
-  eightFormGroup:FormGroup;
+  eightFormGroup: FormGroup;
   isUpdated: boolean = true;
   customerData: any;
   update: any;
@@ -112,13 +112,13 @@ export class DashboardPage implements OnInit {
   lastReceipt: any;
   transfer: boolean = false;
   result: string = '';
-  key:any;
-  sKey:any;
-  pKey:any;
-  nextReciept:any;
-  productType:any;
-  receiptText:boolean=true;
-  salesPlanId:any;  
+  key: any;
+  sKey: any;
+  pKey: any;
+  nextReciept: any;
+  productType: any;
+  receiptText: boolean = true;
+  salesPlanId: any;
   myControl = new FormControl();
   repaymentDuration: any;
   repaymentCyclesopt: any;
@@ -126,13 +126,15 @@ export class DashboardPage implements OnInit {
   businessTypes: any;
   paymentMethods: any;
   banks: any;
-  
+
   repayment_duration: any;
   repayment_cyclesopt: any;
   downPayment_rate: any;
   business_type: any;
   payment_method: any;
   bank: any;
+  salesCategory: any;
+  saleCategory: any;
 
   options: any = [];
   constructor(
@@ -155,12 +157,13 @@ export class DashboardPage implements OnInit {
     this.getBusinessTypes();
     this.getBanks();
     this.getPaymentMethod();
+    this.getSalesCategory();
 
     console.log('=====>', this.repaymentCyclesopt);
   }
 
   ngOnInit() {
-    
+
     this.saleTypes = [
       { id: 1, name: "New -0%", percent: 0 },
       // { id: 2, name: "sala-promo -0%", percent: 0 },
@@ -173,71 +176,72 @@ export class DashboardPage implements OnInit {
       // { id: 9, name: "Opening -10%", percent: 10 }
     ];
     this.salePlans = [
-      { type : 'Products',
-      details: [
-          { 
-           id: 1,
-           name: "6 month plan 0%",
-           period: 6,
-           percent: 0
-         },
-         {
-           id: 2,
-           name: "6 month plan 20%",
-           period: 6,
-           percent: 20
-         },
-         {
-           id: 3,
-           name: "6 month plan 40%",
-           period: 6,
-           percent: 40
-         },
-         {
-           id: 4,
-           name: "6 month plan 60%",
-           period: 6,
-           percent: 60
-         },
-         {
-           id: 5,
-           name: "6 month plan 80%",
-           period: 6,
-           percent: 80
-         },
-         {
-           id: 6,
-           name: "3 month plan 20%",
-           period: 3,
-           percent: 20
-         },
-         {
-           id: 7,
-           name: "3 month plan 40%",
-           period: 3,
-           percent: 40
-         }
-      ]
-   
-      },
-   {
-      type : 'Cash Loan',
-      details:[{
-        id: 1,
-        name: "6 month - 20% equity(still have product)",
-        period: 6,
-        percent: 20,
-        type:'haveProduct',
+      {
+        type: 'Products',
+        details: [
+          {
+            id: 1,
+            name: "6 month plan 0%",
+            period: 6,
+            percent: 0
+          },
+          {
+            id: 2,
+            name: "6 month plan 20%",
+            period: 6,
+            percent: 20
+          },
+          {
+            id: 3,
+            name: "6 month plan 40%",
+            period: 6,
+            percent: 40
+          },
+          {
+            id: 4,
+            name: "6 month plan 60%",
+            period: 6,
+            percent: 60
+          },
+          {
+            id: 5,
+            name: "6 month plan 80%",
+            period: 6,
+            percent: 80
+          },
+          {
+            id: 6,
+            name: "3 month plan 20%",
+            period: 3,
+            percent: 20
+          },
+          {
+            id: 7,
+            name: "3 month plan 40%",
+            period: 3,
+            percent: 40
+          }
+        ]
 
-      },{
-        id: 2,
-        name: "6 month - 20% equity(w/o product)",
-        period: 6,
-        percent: 20,
-        type:'withoutProduct'
-      }]
-   }   
-       ];
+      },
+      {
+        type: 'Cash Loan',
+        details: [{
+          id: 1,
+          name: "6 month - 20% equity(still have product)",
+          period: 6,
+          percent: 20,
+          type: 'haveProduct',
+
+        }, {
+          id: 2,
+          name: "6 month - 20% equity(w/o product)",
+          period: 6,
+          percent: 20,
+          type: 'withoutProduct'
+        }]
+      }
+    ];
 
     this.b_code = [
       { id: 2, code: "ACCT_z6a4tsvupmoo0hz" },
@@ -273,7 +277,7 @@ export class DashboardPage implements OnInit {
       creditReport: ["", Validators.required],
       creditPoints: ["", Validators.required]
     });
-    this.eightFormGroup=this._formBuilder.group({
+    this.eightFormGroup = this._formBuilder.group({
       repayment_duration_id: ["", Validators.required],
       repayment_cycle_id: ["", Validators.required],
       business_type_id: ["", Validators.required],
@@ -302,7 +306,8 @@ export class DashboardPage implements OnInit {
     this.fourthFormGroup = this._formBuilder.group({
       saleType: ["", Validators.required],
       salePlan: ["", Validators.required],
-      saleDetail: ["", Validators.required]
+      saleDetail: ["", Validators.required],
+      saleCategory: ["", Validators.required]
     });
     this.fifthFormGroup = this._formBuilder.group({
       makePayment: ["1", Validators.required],
@@ -312,7 +317,7 @@ export class DashboardPage implements OnInit {
 
     this.onChanges();
   }
-  
+
   confirmDialog(stepper: MatStepper): void {
     const message = `Are you sure the customer made transfer?`;
 
@@ -325,8 +330,8 @@ export class DashboardPage implements OnInit {
 
     dialogRef.afterClosed().subscribe(dialogResult => {
       this.result = dialogResult;
-      if (this.result){
-       this.transferDone(stepper)
+      if (this.result) {
+        this.transferDone(stepper)
       }
     });
 
@@ -337,24 +342,24 @@ export class DashboardPage implements OnInit {
     this.getSkey('secret');
   }
 
-    getPkey(key_type:string){
-      this.authService.getkey(key_type).subscribe(
-        key => {
-         this.key = key['data'].find((data)=> data.name === key_type);
-         
-         this.pKey = this.key.key;
-        }
-      );
-    }
+  getPkey(key_type: string) {
+    this.authService.getkey(key_type).subscribe(
+      key => {
+        this.key = key['data'].find((data) => data.name === key_type);
 
-    getSkey(key_type:string){
-      this.authService.getkey(key_type).subscribe(
-        key => {
-          this.key = key['data'].find((data)=> data.name === key_type);
-          this.sKey = this.key.key;
-        }
-      );
-    }
+        this.pKey = this.key.key;
+      }
+    );
+  }
+
+  getSkey(key_type: string) {
+    this.authService.getkey(key_type).subscribe(
+      key => {
+        this.key = key['data'].find((data) => data.name === key_type);
+        this.sKey = this.key.key;
+      }
+    );
+  }
 
 
   Clicked() {
@@ -362,18 +367,18 @@ export class DashboardPage implements OnInit {
   }
 
   enable() {
-    this.receiptText =  !this.receiptText;
+    this.receiptText = !this.receiptText;
   }
 
   onChanges(): void {
     this.fourthFormGroup.get("salePlan").valueChanges.subscribe(val => {
-         this.salePlans.forEach(element => {
-      if (element.type == val) {
-        this.productType = val;
-        this.saleDetails = element.details;
-      }
-    });
-      
+      this.salePlans.forEach(element => {
+        if (element.type == val) {
+          this.productType = val;
+          this.saleDetails = element.details;
+        }
+      });
+
     });
   }
 
@@ -459,7 +464,7 @@ export class DashboardPage implements OnInit {
       )
       .subscribe(result => {
         this.update = result;
-        console.log('debug ',this.update);
+        console.log('debug ', this.update);
         this.isUpdated = this.update.error;
         if (this.isUpdated == false) {
           // create customer in paystack
@@ -489,25 +494,25 @@ export class DashboardPage implements OnInit {
                   )
                   .subscribe(res => {
                     if (res) {
-                    console.log(res);
+                      console.log(res);
                     }
                   });
-                  if (!(this.secondFormGroup.value.sector === 'formal')){ 
-                    this.seventhFormGroup = this._formBuilder.group({
-                      salaryDay: [
-                        { value: null, disabled: true },
-                        Validators.required,],
-                      salaryDay2: [
-                        { value: null, disabled: true },
-                        Validators.required,],
-                      salaryDay3: [
-                        { value: null, disabled: true },
-                        Validators.required,],
-                      salaryProof: ["", Validators.required],
-                      guarantorSigned: ["", Validators.required],
-                      addressVisited: ["", Validators.required],
-                      creditReport: ["", Validators.required],
-                      creditPoints: ["", Validators.required]
+                if (!(this.secondFormGroup.value.sector === 'formal')) {
+                  this.seventhFormGroup = this._formBuilder.group({
+                    salaryDay: [
+                      { value: null, disabled: true },
+                      Validators.required,],
+                    salaryDay2: [
+                      { value: null, disabled: true },
+                      Validators.required,],
+                    salaryDay3: [
+                      { value: null, disabled: true },
+                      Validators.required,],
+                    salaryProof: ["", Validators.required],
+                    guarantorSigned: ["", Validators.required],
+                    addressVisited: ["", Validators.required],
+                    creditReport: ["", Validators.required],
+                    creditPoints: ["", Validators.required]
                   });
                 } else {
                   this.seventhFormGroup = this._formBuilder.group({
@@ -520,7 +525,7 @@ export class DashboardPage implements OnInit {
                     creditReport: ["", Validators.required],
                     creditPoints: ["", Validators.required]
                   });
-              
+
                 }
                 stepper.next();
               } else {
@@ -541,28 +546,28 @@ export class DashboardPage implements OnInit {
     //   .subscribe(result => {
     //     // console.log(result);
     //     this.productData = result;
-        if (this.productData.length === 0) {
-          this.alertService.presentToast("Product Not Available");
-        } else {
-          // this.nextReciept = this.computeR(this.lastReceipt);
-          // console.log(this.productData.users[0].product_name);
-          this.productPrice = this.productData.price;
-          // this.sixthFormGroup.get('productName').setValue(this.productData.users[0].product_name);
-          this.productName = this.productData.product_name;
-          // this.platform.ready().then(() => {
-          //   this.storage
-          //     .setItem("branch_id", this.productData.users[0].store_name)
-          //     .then(
-          //       () => {
-          //         console.log("branch ID Stored");
-          //       },
-          //       error => console.error("Error storing item", error)
-          //     );
-          // });
-          stepper.next();
-        }
-      }
-  
+    if (this.productData.length === 0) {
+      this.alertService.presentToast("Product Not Available");
+    } else {
+      // this.nextReciept = this.computeR(this.lastReceipt);
+      // console.log(this.productData.users[0].product_name);
+      this.productPrice = this.productData.price;
+      // this.sixthFormGroup.get('productName').setValue(this.productData.users[0].product_name);
+      this.productName = this.productData.product_name;
+      // this.platform.ready().then(() => {
+      //   this.storage
+      //     .setItem("branch_id", this.productData.users[0].store_name)
+      //     .then(
+      //       () => {
+      //         console.log("branch ID Stored");
+      //       },
+      //       error => console.error("Error storing item", error)
+      //     );
+      // });
+      stepper.next();
+    }
+  }
+
   processBankcode() {
     this.authService.getBranchId().then(() => {
       // console.log(this.authService.branch_id);
@@ -578,39 +583,39 @@ export class DashboardPage implements OnInit {
   saveData(stepper: MatStepper, transfer: boolean) {
     var re: any;
 
-    var auth_code = (transfer == false) ? this.verifyData.data.authorization.authorization_code : null; 
-         this.createOrder().subscribe(res => {
-          const orderdata = res['data']['order_number'];
+    var auth_code = (transfer == false) ? this.verifyData.data.authorization.authorization_code : null;
+    this.createOrder().subscribe(res => {
+      const orderdata = res['data']['order_number'];
+      if (res) {
+        this.authService.pushDDdata(
+          this.firstFormGroup.value.customerId,
+          orderdata,
+          (this.seventhFormGroup.value.salaryDay) ? this.seventhFormGroup.value.salaryDay : null,
+          (this.seventhFormGroup.value.salaryDay2) ? this.seventhFormGroup.value.salaryDay2 : null,
+          (this.seventhFormGroup.value.salaryDay3) ? this.seventhFormGroup.value.salaryDay3 : null,
+          this.seventhFormGroup.value.salaryProof,
+          this.seventhFormGroup.value.guarantorSigned,
+          this.seventhFormGroup.value.addressVisited,
+          this.seventhFormGroup.value.creditReport,
+          this.seventhFormGroup.value.creditPoints,
+          (this.secondFormGroup.value.sector == 'formal') ? 1 : 0
+        ).subscribe(res => {
           if (res) {
-            this.authService.pushDDdata(
-              this.firstFormGroup.value.customerId,
+            this.pushauthCode(
               orderdata,
-              (this.seventhFormGroup.value.salaryDay) ? this.seventhFormGroup.value.salaryDay : null,
-              (this.seventhFormGroup.value.salaryDay2) ? this.seventhFormGroup.value.salaryDay2 : null,
-              (this.seventhFormGroup.value.salaryDay3) ? this.seventhFormGroup.value.salaryDay3 : null,
-              this.seventhFormGroup.value.salaryProof,
-              this.seventhFormGroup.value.guarantorSigned,
-              this.seventhFormGroup.value.addressVisited,
-              this.seventhFormGroup.value.creditReport,
-              this.seventhFormGroup.value.creditPoints,
-              (this.secondFormGroup.value.sector == 'formal') ? 1 : 0
-            ).subscribe(res => {
-              if (res) {
-                this.pushauthCode(
-                  orderdata,
-                  auth_code,
-                  // Math.floor(Math.random() * 1000),
-                  stepper
-                );
-              }
-              this.resetForm(stepper);
-            });
+              auth_code,
+              // Math.floor(Math.random() * 1000),
+              stepper
+            );
           }
+          this.resetForm(stepper);
         });
-        }
+      }
+    });
+  }
 
 
-  getreciept(){
+  getreciept() {
     var re: any;
     this.authService.getBranchId().then(() => {
       this.authService.getLastreceipt().subscribe(result => {
@@ -624,7 +629,7 @@ export class DashboardPage implements OnInit {
         }
         // this.lastReceipt = 'LSIW00022'
         console.log(this.lastReceipt);
-        
+
       });
     });
   }
@@ -679,7 +684,7 @@ export class DashboardPage implements OnInit {
   }
 
   checkTypePlan(stepper: MatStepper) {
-   
+
     this.salePlans.forEach(element => {
       if (element.type == this.fourthFormGroup.value.salePlan) {
         this.saleDetails = element.details;
@@ -692,7 +697,7 @@ export class DashboardPage implements OnInit {
         this.salePlanPercent = element.percent;
         this.salePlanPeriod = element.period;
         this.salesPlanId = element.id;
-        this.salesType=element.type;
+        this.salesType = element.type;
       }
     });
 
@@ -701,13 +706,19 @@ export class DashboardPage implements OnInit {
         this.saleType = element.name;
       }
     });
-   
+
+    this.salesCategory.forEach(element => {
+      if (element.id == this.fourthFormGroup.value.saleCategory) {
+        this.saleCategory = element.name;
+      }
+    });
+
     console.log(this.fourthFormGroup.value);
 
     if (this.thirdFormGroup.value) {
-      console.log(this.productPrice, this.salePlanPercent, this.salePlanPeriod,this.productType,this.salesType)
+      console.log(this.productPrice, this.salePlanPercent, this.salePlanPeriod, this.productType, this.salesType)
       // this.priceCal();
-this.illustratedPrice (this.productPrice, this.salePlanPercent, this.salePlanPeriod,this.productType);
+      this.illustratedPrice(this.productPrice, this.salePlanPercent, this.salePlanPeriod, this.productType);
 
       stepper.next();
     } else {
@@ -716,16 +727,16 @@ this.illustratedPrice (this.productPrice, this.salePlanPercent, this.salePlanPer
   }
 
   nextStep(stepper: MatStepper) {
-   
+
     console.log(this.eightFormGroup.value);
     if (this.eightFormGroup.value) {
       stepper.next();
     } else {
       stepper.previous();
     }
-    
+
   }
- 
+
   makePayment(stepper: MatStepper) {
     console.log(this.fifthFormGroup.value);
     if (this.fifthFormGroup.value) {
@@ -735,200 +746,200 @@ this.illustratedPrice (this.productPrice, this.salePlanPercent, this.salePlanPer
     }
   }
 
-  checkP (wPrice, val, type){
-    if ( type != 'Cash Loan'){
+  checkP(wPrice, val, type) {
+    if (type != 'Cash Loan') {
       return val;
     }
     else {
-      return Math.ceil(val/100)*100;
+      return Math.ceil(val / 100) * 100;
     }
   }
 
-rawCal ( wPrice, plan, month, type) {
-  wPrice = Number(wPrice);
+  rawCal(wPrice, plan, month, type) {
+    wPrice = Number(wPrice);
 
-let params = [
-        {   
-            month: 12, pim: [
-                { plan:  0, int: 3, marg: 0.35 },
-                { plan: 20, int: 2.5, marg: 0.29 },
-                { plan: 40, int: 2.5, marg: 0.3 },
-                { plan: 60, int: 2.5, marg: 0.3 },
-                { plan: 80, int: 2.5, marg: 0.3 }
+    let params = [
+      {
+        month: 12, pim: [
+          { plan: 0, int: 3, marg: 0.35 },
+          { plan: 20, int: 2.5, marg: 0.29 },
+          { plan: 40, int: 2.5, marg: 0.3 },
+          { plan: 60, int: 2.5, marg: 0.3 },
+          { plan: 80, int: 2.5, marg: 0.3 }
 
-            ]
-        },
-        {
-            month: 6, pim: [
-                { plan:  0, int: 3.3, marg: 0.27 },
-                { plan: 20, int: 3, marg: 0.22 },
-                { plan: 40, int: 3, marg: 0.22 },
-                { plan: 60, int: 3, marg: 0.23 },
-                { plan: 80, int: 3, marg: 0.25 }
+        ]
+      },
+      {
+        month: 6, pim: [
+          { plan: 0, int: 3.3, marg: 0.27 },
+          { plan: 20, int: 3, marg: 0.22 },
+          { plan: 40, int: 3, marg: 0.22 },
+          { plan: 60, int: 3, marg: 0.23 },
+          { plan: 80, int: 3, marg: 0.25 }
 
-            ]
-        },
-        {
-            month: 3 , pim: [
-                { plan:  0, int: 5, marg: 0.3 },
-                { plan: 20, int: 3, marg: 0.23 },
-                { plan: 40, int: 4, marg: 0.23 },
-                { plan: 60, int: 4, marg: 0.23 },
-                { plan: 80, int: 4, marg: 0.23 }
+        ]
+      },
+      {
+        month: 3, pim: [
+          { plan: 0, int: 5, marg: 0.3 },
+          { plan: 20, int: 3, marg: 0.23 },
+          { plan: 40, int: 4, marg: 0.23 },
+          { plan: 60, int: 4, marg: 0.23 },
+          { plan: 80, int: 4, marg: 0.23 }
 
-            ]
-        }
+        ]
+      }
     ];
 
-   let cash_params = [
-        
-        {
-            month: 6, pim: [
-              {type:'haveProduct', plan: 20, int: 2.75, marg: 0 },
-              {type:'withoutProduct', plan: 20, int: 3.15, marg: 0 },
+    let cash_params = [
 
-            ]
-        }
+      {
+        month: 6, pim: [
+          { type: 'haveProduct', plan: 20, int: 2.75, marg: 0 },
+          { type: 'withoutProduct', plan: 20, int: 3.15, marg: 0 },
+
+        ]
+      }
     ];
 
-        console.log(plan, month);
-        let mPrice;
-        let dpPrice;
-        let rInt;
-        let trInt;
-        let tbTax;
-        let taTax;
-        let rePay;
-        let margin;
-        let int;
-        let rPrice;
-        let f_params;
-        
-        f_params = (type != 'Cash Loan')? params : cash_params;
+    console.log(plan, month);
+    let mPrice;
+    let dpPrice;
+    let rInt;
+    let trInt;
+    let tbTax;
+    let taTax;
+    let rePay;
+    let margin;
+    let int;
+    let rPrice;
+    let f_params;
 
-        if(type != 'Cash Loan'){
-          f_params.forEach(element => {
-            if (month == element.month) {
-                console.log(element.month)
-                element.pim.forEach(element2 => {
-                    if (element2.plan == plan) {
-                        int = element2.int;
-                        margin = element2.marg;
-                        console.log(element2.int, element2.marg);
-                    }
-                });
+    f_params = (type != 'Cash Loan') ? params : cash_params;
+
+    if (type != 'Cash Loan') {
+      f_params.forEach(element => {
+        if (month == element.month) {
+          console.log(element.month)
+          element.pim.forEach(element2 => {
+            if (element2.plan == plan) {
+              int = element2.int;
+              margin = element2.marg;
+              console.log(element2.int, element2.marg);
             }
-        });
-        }else{
-          f_params.forEach(element => {
-            if (month == element.month) {
-                console.log(element.month)
-                element.pim.forEach(element2 => {
-                    if (element2.type == this.salesType) {
-                        int = element2.int;
-                        margin = element2.marg;
-                        console.log('hopppppppi',element2.int, element2.marg);
-                    }
-                });
-            }
-        });
+          });
         }
-
-        var monthParam = (month == 12) ? 24 :  (month == 6)? 12 : 6 ;
-        console.log(monthParam);
-
-            // market price
-            mPrice =     this.checkP (wPrice, (wPrice * margin) + wPrice, type);
-            console.log(mPrice)
-            
-            // downpayment price
-            dpPrice = this.checkP (wPrice, mPrice * (plan / 100), type) ;
-            console.log(dpPrice)
-
-            //residual price
-            rPrice = this.checkP (wPrice, mPrice - dpPrice, type) ;
-            console.log(rPrice)
-
-            //interest on residual
-            rInt = this.checkP (wPrice, (rPrice * (int / 100)), type) 
-            console.log(rInt);
-
-            // totalresidual after interest
-            trInt = this.checkP (wPrice,  ((rPrice/monthParam)+rInt) * monthParam, type) 
-            console.log(rInt);
-
-            
-
-            // total before tax
-            tbTax = this.checkP (wPrice, trInt + dpPrice, type)  
-            console.log(tbTax);
-
-            // total after tax
-            taTax = this.checkP (wPrice, tbTax + (tbTax * 0.05), type) ;
-            console.log(taTax);
-
-            return taTax;
+      });
+    } else {
+      f_params.forEach(element => {
+        if (month == element.month) {
+          console.log(element.month)
+          element.pim.forEach(element2 => {
+            if (element2.type == this.salesType) {
+              int = element2.int;
+              margin = element2.marg;
+              console.log('hopppppppi', element2.int, element2.marg);
+            }
+          });
+        }
+      });
     }
 
-illustratedPrice(wPrice, plan, month,type){
-  let newDp;
-  let newRp;
-  let mRepay;
-  let newTax;
-   // total after tax 
-  let taTax  =  this.rawCal (wPrice, plan, month,type);
+    var monthParam = (month == 12) ? 24 : (month == 6) ? 12 : 6;
+    console.log(monthParam);
 
-  var monthParam = (month == 12)? 24 :  (month == 6)? 12 : 6 ;
-        console.log(monthParam);
+    // market price
+    mPrice = this.checkP(wPrice, (wPrice * margin) + wPrice, type);
+    console.log(mPrice)
 
-           // new downpayment price
-            newDp =  this.checkP (wPrice, taTax * (plan / 100), type) ;
-            console.log(newDp)
+    // downpayment price
+    dpPrice = this.checkP(wPrice, mPrice * (plan / 100), type);
+    console.log(dpPrice)
 
-            //new residual price
-            newRp = this.checkP (wPrice, taTax - newDp, type) ;
-            console.log(newRp)
+    //residual price
+    rPrice = this.checkP(wPrice, mPrice - dpPrice, type);
+    console.log(rPrice)
 
-          //Montly repayment price
-            mRepay = this.checkP (wPrice, newRp / monthParam, type) ;
-            console.log(mRepay)
-           
-           if (type != 'Cash Loan'){
+    //interest on residual
+    rInt = this.checkP(wPrice, (rPrice * (int / 100)), type)
+    console.log(rInt);
 
-           newTax = Math.floor(newDp/100)*100 + (Math.floor(mRepay/100)*100 *(monthParam));
-        console.log('Total Price = ' + newTax);
-        console.log('UpFront = ' + Math.floor(newDp/100)*100);
-        console.log('Montly Repayment = ' + Math.floor(mRepay/100)*100);
+    // totalresidual after interest
+    trInt = this.checkP(wPrice, ((rPrice / monthParam) + rInt) * monthParam, type)
+    console.log(rInt);
 
-        let downP = Math.floor(newDp/100)*100
-            if (downP == 0) {
-              downP = downP + 100;
-            }
-      
-            this.sixthFormGroup = this._formBuilder.group({
-              repaymentPrice: [(Math.floor(mRepay/100)*100)*2],
-              totalPrice: [newTax],
-              downPayment: [downP]
-            });
 
-           }
-           else {
-            newTax = Math.floor(0.2* wPrice) + (mRepay * monthParam);
-        console.log('Total Price = ' + newTax);
-        console.log('Equity = ' + Math.floor(0.2* wPrice));
-        console.log('Montly Repayment = ' + Math.floor(mRepay/100)*100);
 
-        let downP = Math.floor(0.2* wPrice);
-            if (downP == 0) {
-              downP = downP + 100;
-            }
-      
-            this.sixthFormGroup = this._formBuilder.group({
-              repaymentPrice: [(Math.floor(mRepay/100)*100)*2],
-              totalPrice: [newTax],
-              downPayment: [downP]
-            });
-           }
+    // total before tax
+    tbTax = this.checkP(wPrice, trInt + dpPrice, type)
+    console.log(tbTax);
+
+    // total after tax
+    taTax = this.checkP(wPrice, tbTax + (tbTax * 0.05), type);
+    console.log(taTax);
+
+    return taTax;
+  }
+
+  illustratedPrice(wPrice, plan, month, type) {
+    let newDp;
+    let newRp;
+    let mRepay;
+    let newTax;
+    // total after tax 
+    let taTax = this.rawCal(wPrice, plan, month, type);
+
+    var monthParam = (month == 12) ? 24 : (month == 6) ? 12 : 6;
+    console.log(monthParam);
+
+    // new downpayment price
+    newDp = this.checkP(wPrice, taTax * (plan / 100), type);
+    console.log(newDp)
+
+    //new residual price
+    newRp = this.checkP(wPrice, taTax - newDp, type);
+    console.log(newRp)
+
+    //Montly repayment price
+    mRepay = this.checkP(wPrice, newRp / monthParam, type);
+    console.log(mRepay)
+
+    if (type != 'Cash Loan') {
+
+      newTax = Math.floor(newDp / 100) * 100 + (Math.floor(mRepay / 100) * 100 * (monthParam));
+      console.log('Total Price = ' + newTax);
+      console.log('UpFront = ' + Math.floor(newDp / 100) * 100);
+      console.log('Montly Repayment = ' + Math.floor(mRepay / 100) * 100);
+
+      let downP = Math.floor(newDp / 100) * 100
+      if (downP == 0) {
+        downP = downP + 100;
+      }
+
+      this.sixthFormGroup = this._formBuilder.group({
+        repaymentPrice: [(Math.floor(mRepay / 100) * 100) * 2],
+        totalPrice: [newTax],
+        downPayment: [downP]
+      });
+
+    }
+    else {
+      newTax = Math.floor(0.2 * wPrice) + (mRepay * monthParam);
+      console.log('Total Price = ' + newTax);
+      console.log('Equity = ' + Math.floor(0.2 * wPrice));
+      console.log('Montly Repayment = ' + Math.floor(mRepay / 100) * 100);
+
+      let downP = Math.floor(0.2 * wPrice);
+      if (downP == 0) {
+        downP = downP + 100;
+      }
+
+      this.sixthFormGroup = this._formBuilder.group({
+        repaymentPrice: [(Math.floor(mRepay / 100) * 100) * 2],
+        totalPrice: [newTax],
+        downPayment: [downP]
+      });
+    }
   }
 
   processAmount(stepper: MatStepper) {
@@ -995,7 +1006,7 @@ illustratedPrice(wPrice, plan, month,type){
   }
 
   pushauthCode(order_id: any, auth_code: any, stepper: MatStepper) {
-    if (auth_code !== null){
+    if (auth_code !== null) {
       this.authService.logAuthcode(order_id, auth_code).subscribe(result => {
         if (result) {
           this.authService.getEpId().then(() => {
@@ -1006,15 +1017,14 @@ illustratedPrice(wPrice, plan, month,type){
         }
       });
     }
-    else 
-    {
+    else {
       this.authService.getEpId().then(() => {
         console.log(this.authService.id);
         this.order.sales_agent = this.authService.id;
         this.pushOrder(stepper);
       });
     }
-   
+
   }
 
   pushOrder(stepper: MatStepper) {
@@ -1105,40 +1115,40 @@ illustratedPrice(wPrice, plan, month,type){
     this.navCtrl.navigateRoot("/reactivation");
   }
 
-  resetForm(stepper: MatStepper){
+  resetForm(stepper: MatStepper) {
     this.lastReceipt = "";
     this.nextReciept = "";
-        stepper.reset();
-        this.ngOnInit();
-        this.firstFormGroup.reset;
-        this.secondFormGroup.reset;
-        this.thirdFormGroup.reset;
-        this.fourthFormGroup.reset;
-        this.fifthFormGroup.reset;
-        this.sixthFormGroup.reset;
-        this.seventhFormGroup.reset;
+    stepper.reset();
+    this.ngOnInit();
+    this.firstFormGroup.reset;
+    this.secondFormGroup.reset;
+    this.thirdFormGroup.reset;
+    this.fourthFormGroup.reset;
+    this.fifthFormGroup.reset;
+    this.sixthFormGroup.reset;
+    this.seventhFormGroup.reset;
   }
 
 
   keyPress(event: KeyboardEvent) {
-    console.log('event event ',this.thirdFormGroup.value.productSku);
+    console.log('event event ', this.thirdFormGroup.value.productSku);
     this.authService
       .comfirmProduct(this.thirdFormGroup.value.productSku)
-      .subscribe( async (res: any) =>{
+      .subscribe(async (res: any) => {
         this.options = res.data.data;
         console.log('optionsoptionsoptionsoptions ', res.data.data);
         if (this.options.length === 0) {
           this.alertService.presentToast("Product Not Available");
         }
-      },error => {
+      }, error => {
         console.log(error);
       });
   }
 
-  selectedItem(data){
+  selectedItem(data) {
 
-    console.log('data ',data);
-    this.productData=data;
+    console.log('data ', data);
+    this.productData = data;
   }
 
   getRepaymentCycle() {
@@ -1149,9 +1159,9 @@ illustratedPrice(wPrice, plan, month,type){
       'Authorization': `Bearer ${localStorage.getItem('token')}`
     });
     let options = { headers: headers };
-    return this.http.get(this.env.NEW_API_URL + '/api/repayment_cycle',options
-    ).subscribe((res)=>{
-      this.repaymentCyclesopt =res['data']['data'];
+    return this.http.get(this.env.NEW_API_URL + '/api/repayment_cycle', options
+    ).subscribe((res) => {
+      this.repaymentCyclesopt = res['data']['data'];
     })
   }
 
@@ -1163,9 +1173,9 @@ illustratedPrice(wPrice, plan, month,type){
       'Authorization': `Bearer ${localStorage.getItem('token')}`
     });
     let options = { headers: headers };
-    return this.http.get(this.env.NEW_API_URL + '/api/repayment_duration',options
-    ).subscribe((res)=>{
-      this.repaymentDuration =res['data']['data'];
+    return this.http.get(this.env.NEW_API_URL + '/api/repayment_duration', options
+    ).subscribe((res) => {
+      this.repaymentDuration = res['data']['data'];
     })
   }
 
@@ -1176,9 +1186,9 @@ illustratedPrice(wPrice, plan, month,type){
       'Authorization': `Bearer ${localStorage.getItem('token')}`
     });
     let options = { headers: headers };
-    return this.http.get(this.env.NEW_API_URL + '/api/down_payment_rate',options
-    ).subscribe((res)=>{
-             this.downPaymentRates =res['data']['data'];
+    return this.http.get(this.env.NEW_API_URL + '/api/down_payment_rate', options
+    ).subscribe((res) => {
+      this.downPaymentRates = res['data']['data'];
     })
   }
 
@@ -1189,9 +1199,9 @@ illustratedPrice(wPrice, plan, month,type){
       'Authorization': `Bearer ${localStorage.getItem('token')}`
     });
     let options = { headers: headers };
-    return this.http.get(this.env.NEW_API_URL + '/api/business_type',options
-    ).subscribe((res)=>{
-      this.businessTypes =res['data']['data'].filter((data)=> data.name.includes('Altara Pay'));
+    return this.http.get(this.env.NEW_API_URL + '/api/business_type', options
+    ).subscribe((res) => {
+      this.businessTypes = res['data']['data'].filter((data) => data.name.includes('Altara Pay'));
     })
   }
 
@@ -1202,10 +1212,10 @@ illustratedPrice(wPrice, plan, month,type){
       'Authorization': `Bearer ${localStorage.getItem('token')}`
     });
     let options = { headers: headers };
-    return this.http.get(this.env.NEW_API_URL + '/api/payment_method',options
-    ).subscribe((res)=>{
-      this.paymentMethods =res['paymentMethods'].filter((data)=> data.name.includes('direct-debit') || data.name.includes('transfer'));
-      console.log('===> payment_method <=== ',res)
+    return this.http.get(this.env.NEW_API_URL + '/api/payment_method', options
+    ).subscribe((res) => {
+      this.paymentMethods = res['paymentMethods'].filter((data) => data.name.includes('direct-debit') || data.name.includes('transfer'));
+      console.log('===> payment_method <=== ', res)
     })
   }
   getBanks() {
@@ -1215,9 +1225,9 @@ illustratedPrice(wPrice, plan, month,type){
       'Authorization': `Bearer ${localStorage.getItem('token')}`
     });
     let options = { headers: headers };
-    return this.http.get(this.env.NEW_API_URL + '/api/bank',options
-    ).subscribe((res)=>{
-      console.log('===> banks <=== ',res);
+    return this.http.get(this.env.NEW_API_URL + '/api/bank', options
+    ).subscribe((res) => {
+      console.log('===> banks <=== ', res);
       this.banks = res['banks'];
     })
   }
@@ -1229,22 +1239,36 @@ illustratedPrice(wPrice, plan, month,type){
     });
     let options = { headers: headers };
 
-    const data ={
+    const data = {
       ...this.eightFormGroup.value,
-      "customer_id":this.firstFormGroup.value.customerId,
+      "customer_id": this.firstFormGroup.value.customerId,
       "inventory_id": this.productData.id,
       "branch_id": localStorage.getItem('branchId'),
       "down_payment": this.sixthFormGroup.value.downPayment,
       "repayment": this.sixthFormGroup.value.repaymentPrice,
       "product_price": this.productData.price,
-      "bank_id":1,
-      "payment_method_id": this.transfer ? this.paymentMethods.find((data)=>data.name === 'transfer').id : this.paymentMethods.find((data)=>data.name === 'direct-debit').id ,
+      "bank_id": 1,
+      "sales_category_id": this.fourthFormGroup.value.saleCategory,
+      "payment_method_id": this.transfer ? this.paymentMethods.find((data) => data.name === 'transfer').id : this.paymentMethods.find((data) => data.name === 'direct-debit').id,
     }
-    return this.http.post(this.env.NEW_API_URL + '/api/new_order',data,options
+    return this.http.post(this.env.NEW_API_URL + '/api/new_order', data, options
     ).pipe(
       tap(data => {
         return data;
       })
     )
+  }
+  getSalesCategory() {
+    console.log('data getSalesCategoryMethod ===> ');
+    let headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${localStorage.getItem('token')}`
+    });
+    let options = { headers: headers };
+    return this.http.get(this.env.NEW_API_URL + '/api/sales_category', options
+    ).subscribe((res) => {
+      console.log('===> SalesCategory <=== ', res);
+      this.salesCategory = res['data']['data'];
+    })
   }
 }

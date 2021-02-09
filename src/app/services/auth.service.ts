@@ -23,7 +23,7 @@ export class AuthService {
   isProductValid = false;
   id: any;
   branch_id: any;
-  key:any;
+  key: any;
 
 
   constructor(
@@ -32,7 +32,7 @@ export class AuthService {
     private env: EnvService,
     private router: Router,
     private toastController: ToastController,
-    private platform: Platform,    
+    private platform: Platform,
     private ionLoader: LoaderService
 
   ) { }
@@ -48,11 +48,11 @@ export class AuthService {
       map(data => {
         this.data = data;
         console.log(this.data);
-          localStorage.setItem('token', this.data.api_token);
-          localStorage.setItem('branchId', this.data.api_branch_id);
-          this.token = this.data.api_token;
-          this.isLoggedIn = true;
-          return this.data;
+        localStorage.setItem('token', this.data.api_token);
+        localStorage.setItem('branchId', this.data.api_branch_id);
+        this.token = this.data.api_token;
+        this.isLoggedIn = true;
+        return this.data;
       })
     )
   }
@@ -129,9 +129,9 @@ export class AuthService {
       'Authorization': `Bearer ${localStorage.getItem('token')}`
     });
     let options = { headers: headers };
-    
-    return this.http.get(this.env.NEW_API_URL + `/api/inventory?productName=${productSku}&isActive=true`,
-    options
+
+    return this.http.get(this.env.NEW_API_URL + `/api/inventory?productName=${productSku}`,
+      options
     ).pipe(
       tap(data => {
         return data;
@@ -139,7 +139,7 @@ export class AuthService {
     )
   }
 
-  createCustomer(id: Number, email: String, firstName: String, lastName: String, phoneNo: String, key:string) {
+  createCustomer(id: Number, email: String, firstName: String, lastName: String, phoneNo: String, key: string) {
     let tokenStr = key;
     let headers = new HttpHeaders({
       'Content-Type': 'application/json',
@@ -159,7 +159,7 @@ export class AuthService {
     )
   }
 
-  paystackCustomer(id: Number, customer_code: String, ) {
+  paystackCustomer(id: Number, customer_code: String,) {
     this.ionLoader.showLoader();
     return this.http.post(this.env.API_URL + 'paystackCustomerData',
       { id: id, customer_code: customer_code }
@@ -193,13 +193,14 @@ export class AuthService {
     )
   }
 
-  logAuthcode(order_id: any, auth_code: any) {    
+  logAuthcode(order_id: any, auth_code: any) {
     this.ionLoader.showLoader();
 
     return this.http.post(this.env.API_URL + 'paystackauthcode',
       { order_id: order_id, auth_code: auth_code }
     ).pipe(
-      tap(data => {    this.ionLoader.hideLoader();
+      tap(data => {
+        this.ionLoader.hideLoader();
 
         return data;
       })
@@ -260,7 +261,7 @@ export class AuthService {
       { branch_id: this.branch_id }
     ).pipe(
       tap(data => {
-        console.log('getLastreceipt ',data);
+        console.log('getLastreceipt ', data);
         // this.ionLoader.hideLoader();
 
         return data;
@@ -282,17 +283,17 @@ export class AuthService {
     )
   }
 
-  getkey(key_type){
+  getkey(key_type) {
     // this.ionLoader.showLoader();
     let headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${localStorage.getItem('token')}`
     });
     let options = { headers: headers };
-    return this.http.get(this.env.NEW_API_URL + '/api/dd_k',options
+    return this.http.get(this.env.NEW_API_URL + '/api/dd_k', options
     ).pipe(
-      tap(data => {    
-      return data;
+      tap(data => {
+        return data;
       })
     )
   }
@@ -328,4 +329,3 @@ export class AuthService {
 
 }
 
- 

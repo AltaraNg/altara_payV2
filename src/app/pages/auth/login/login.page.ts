@@ -12,7 +12,7 @@ import { LoaderService } from 'src/app/loader.service';
   styleUrls: ['./login.page.scss'],
 })
 export class LoginPage implements OnInit {
-  
+
   constructor(
     private modalController: ModalController,
     private authService: AuthService,
@@ -25,7 +25,7 @@ export class LoginPage implements OnInit {
 
   ionViewWillEnter() {
     this.authService.getToken().then(() => {
-      if(this.authService.isLoggedIn) {
+      if (this.authService.isLoggedIn) {
         this.navCtrl.navigateRoot('/dashboard');
       }
     });
@@ -49,20 +49,21 @@ export class LoginPage implements OnInit {
   // }
 
   login(form: NgForm) {
-    if (form.value.email === "" || form.value.password === ""){
-      return  this.alertService.presentToast("Kindly enter your login details.");
+    if (form.value.email === "" || form.value.password === "") {
+      return this.alertService.presentToast("Kindly enter your login details.");
     }
     this.ionLoader.showLoader();
     this.authService.login(form.value.email, form.value.password).subscribe(
       data => {
         this.ionLoader.hideLoader();
-          this.alertService.presentToast("Logged In");
-          this.navCtrl.navigateRoot('/dashboard');
+        this.alertService.presentToast("Logged In");
+        this.navCtrl.navigateRoot('/dashboard');
       },
-      error => { this.ionLoader.hideLoader();          
+      error => {
+        this.ionLoader.hideLoader();
         this.alertService.presentToast("Wrong Credentials");
 
-        console.error('===> error <=== ',error);
+        console.error('===> error <=== ', error);
       }
     );
   }
