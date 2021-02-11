@@ -286,7 +286,7 @@ export class DashboardPage implements OnInit {
       repayment_cycle_id: ["", Validators.required],
       business_type_id: ["", Validators.required],
       payment_type_id: ["", Validators.required],
-      custom_date: ["", Validators.required]
+      custom_date: [""]
     });
 
     this.firstFormGroup = this._formBuilder.group({
@@ -734,6 +734,10 @@ export class DashboardPage implements OnInit {
   }
 
   nextStep(stepper: MatStepper) {
+    if (this.eightFormGroup.value.repayment_cycle_id == 3 && !this.eightFormGroup.value.custom_date) {
+      return;
+    }
+
 
     console.log(this.eightFormGroup.value);
     if (this.eightFormGroup.value) {
