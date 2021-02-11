@@ -17,6 +17,7 @@ import { Platform } from "@ionic/angular";
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { EnvService } from "src/app/services/env.service";
 import { tap, map } from 'rxjs/operators';
+import { LoaderService } from "src/app/loader.service";
 
 @Component({
   selector: "app-dashboard",
@@ -135,6 +136,7 @@ export class DashboardPage implements OnInit {
   bank: any;
   salesCategory: any;
   saleCategory: any;
+  roles: any
 
   options: any = [];
   constructor(
@@ -148,6 +150,8 @@ export class DashboardPage implements OnInit {
     public dialog: MatDialog,
     private http: HttpClient,
     private env: EnvService,
+    private ionLoader: LoaderService
+
 
   ) {
     this.menu.enable(true);
@@ -282,6 +286,7 @@ export class DashboardPage implements OnInit {
       repayment_cycle_id: ["", Validators.required],
       business_type_id: ["", Validators.required],
       payment_type_id: ["", Validators.required],
+      custom_date: ["", Validators.required]
     });
 
     this.firstFormGroup = this._formBuilder.group({
@@ -307,7 +312,9 @@ export class DashboardPage implements OnInit {
       saleType: ["", Validators.required],
       salePlan: ["", Validators.required],
       saleDetail: ["", Validators.required],
-      saleCategory: ["", Validators.required]
+      saleCategory: ["", Validators.required],
+      owner: ["", Validators.required]
+
     });
     this.fifthFormGroup = this._formBuilder.group({
       makePayment: ["1", Validators.required],
@@ -1249,6 +1256,7 @@ export class DashboardPage implements OnInit {
       "product_price": this.productData.price,
       "bank_id": 1,
       "sales_category_id": this.fourthFormGroup.value.saleCategory,
+      "owner_id": this.fourthFormGroup.value.owner,
       "payment_method_id": this.transfer ? this.paymentMethods.find((data) => data.name === 'transfer').id : this.paymentMethods.find((data) => data.name === 'direct-debit').id,
     }
     return this.http.post(this.env.NEW_API_URL + '/api/new_order', data, options
@@ -1269,6 +1277,23 @@ export class DashboardPage implements OnInit {
     ).subscribe((res) => {
       console.log('===> SalesCategory <=== ', res);
       this.salesCategory = res['data']['data'];
+    })
+  }
+
+  fetchRoles() {
+    this.ionLoader.showLoader();
+
+    let headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${localStorage.getItem('token')}`
+    });
+    let options = { headers: headers };
+    return this.http.get(this.env.NEW_API_URL + `/api/sales-category/${this.fourthFormGroup.value.saleCategory}/roles`, options
+    ).subscribe((res) => {
+      console.log('===> SalesCategory <=== ', res);
+      this.ionLoader.hideLoader();
+
+      this.roles = res['data'][0]['users'];
     })
   }
 }

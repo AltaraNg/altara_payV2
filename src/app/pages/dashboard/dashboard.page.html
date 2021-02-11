@@ -261,11 +261,27 @@
                 </mat-form-field>
                 <hr>
                 <mat-form-field>
-                    <mat-select matNativeControl formControlName="saleCategory" required>
+                    <mat-select (selectionChange)="fetchRoles()" matNativeControl formControlName="saleCategory"
+                        required>
                         <mat-option value="">Sales Category</mat-option>
                         <mat-option *ngFor="let type of salesCategory;" [value]="type.id"> {{type.name}} </mat-option>
                     </mat-select>
                 </mat-form-field>
+
+
+                <hr>
+                <mat-form-field *ngIf="roles;else other_content">
+                    <mat-select matNativeControl formControlName="owner" required>
+                        <mat-option value="">Owner</mat-option>
+                        <mat-option *ngFor="let type of roles;" [value]="type.id"> {{type.full_name}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <ng-template #other_content></ng-template>
+
+
+
+
 
                 <div>
                     <button mat-button matStepperPrevious>Back</button>
@@ -289,6 +305,15 @@
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
+                <hr>
+                <mat-form-field *ngIf="eightFormGroup.value.repayment_cycle_id==3;else other_content">
+                    <!-- <input matInput [matDatepicker]="picker" formControlName="custom_date" placeholder="Choose a date">
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker> -->
+                    <input matInput placeholder="Custome Date" formControlName="custom_date">
+                </mat-form-field>
+                <hr>
+                <ng-template #other_content></ng-template>
                 <hr>
                 <mat-form-field>
                     <mat-select matNativeControl placeholder="Repayment Duration"
