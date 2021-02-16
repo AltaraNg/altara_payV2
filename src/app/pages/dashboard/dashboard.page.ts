@@ -18,6 +18,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { EnvService } from "src/app/services/env.service";
 import { tap, map } from 'rxjs/operators';
 import { LoaderService } from "src/app/loader.service";
+import calculate from "src/app/helpers/calculator";
 
 @Component({
   selector: "app-dashboard",
@@ -137,6 +138,12 @@ export class DashboardPage implements OnInit {
   salesCategory: any;
   saleCategory: any;
   roles: any
+  calculation: any
+  fPayment: any;
+  pPrice: any;
+  rPayment: any;
+  repaymentCircle: any;
+  rDuration: any;
 
   options: any = [];
   constructor(
@@ -162,8 +169,7 @@ export class DashboardPage implements OnInit {
     this.getBanks();
     this.getPaymentMethod();
     this.getSalesCategory();
-
-    console.log('=====>', this.repaymentCyclesopt);
+    this.getCalculation()
   }
 
   ngOnInit() {
@@ -641,7 +647,6 @@ export class DashboardPage implements OnInit {
     });
   }
 
-
   computeR(rec: any) {
     var prefx = [
       { id: 2, pre: "APCH" },
@@ -739,12 +744,23 @@ export class DashboardPage implements OnInit {
     }
 
 
+    if (this.eightFormGroup.value.repayment_cycle_id == 3 && !this.eightFormGroup.value.custom_date) {
+      return;
+
+    }
+
+    if (this.eightFormGroup.value.repayment_cycle_id != 3) {
+      delete this.eightFormGroup.value.custom_date;
+    }
+
+
     console.log(this.eightFormGroup.value);
     if (this.eightFormGroup.value) {
       stepper.next();
     } else {
       stepper.previous();
     }
+    this.getCalc();
 
   }
 
@@ -1243,6 +1259,20 @@ export class DashboardPage implements OnInit {
     })
   }
 
+  getCalculation() {
+    console.log('data getCalculation ===> ');
+    let headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${localStorage.getItem('token')}`
+    });
+    let options = { headers: headers };
+    return this.http.get(this.env.NEW_API_URL + '/api/price_calculator', options
+    ).subscribe((res) => {
+      console.log('===> getCalculation <=== ', res['data']);
+      this.calculation = res['data'];
+    })
+  }
+
   createOrder() {
     let headers = new HttpHeaders({
       'Content-Type': 'application/json',
@@ -1252,6 +1282,10 @@ export class DashboardPage implements OnInit {
 
     const data = {
       ...this.eightFormGroup.value,
+      "repayment_cycle_id": this.eightFormGroup.value.repayment_cycle_id.id,
+      "repayment_duration_id": this.eightFormGroup.value.repayment_duration_id.id,
+      "payment_type_id": this.eightFormGroup.value.payment_type_id.id,
+      "business_type_id": this.eightFormGroup.value.business_type_id,
       "customer_id": this.firstFormGroup.value.customerId,
       "inventory_id": this.productData.id,
       "branch_id": localStorage.getItem('branchId'),
@@ -1271,7 +1305,6 @@ export class DashboardPage implements OnInit {
     )
   }
   getSalesCategory() {
-    console.log('data getSalesCategoryMethod ===> ');
     let headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -1279,7 +1312,6 @@ export class DashboardPage implements OnInit {
     let options = { headers: headers };
     return this.http.get(this.env.NEW_API_URL + '/api/sales_category', options
     ).subscribe((res) => {
-      console.log('===> SalesCategory <=== ', res);
       this.salesCategory = res['data']['data'];
     })
   }
@@ -1294,10 +1326,83 @@ export class DashboardPage implements OnInit {
     let options = { headers: headers };
     return this.http.get(this.env.NEW_API_URL + `/api/sales-category/${this.fourthFormGroup.value.saleCategory}/roles`, options
     ).subscribe((res) => {
-      console.log('===> SalesCategory <=== ', res);
       this.ionLoader.hideLoader();
 
       this.roles = res['data'][0]['users'];
     })
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  getCalc() {
+    console.log(">>>getCalc>>()");
+    try {
+      const data0 = {
+        ...this.eightFormGroup.value,
+        "customer_id": this.firstFormGroup.value.customerId,
+        "inventory_id": this.productData.id,
+        "branch_id": localStorage.getItem('branchId'),
+        "down_payment": this.sixthFormGroup.value.downPayment,
+        "repayment": this.sixthFormGroup.value.repaymentPrice,
+        "product_price": this.productData.price,
+        "bank_id": 1,
+        "sales_category_id": this.fourthFormGroup.value.saleCategory,
+        "owner_id": this.fourthFormGroup.value.owner,
+        "payment_method_id": this.transfer ? this.paymentMethods.find((data) => data.name === 'transfer').id : this.paymentMethods.find((data) => data.name === 'direct-debit').id,
+        ...{
+          branch_id: localStorage.getItem("branch_id"),
+          status_id: 1,
+        },
+      };
+
+      const caly = this.calculation;
+
+      const data = caly.filter(
+        (x) =>
+          x.business_type_id === data0.business_type_id &&
+          x.down_payment_rate_id === data0.payment_type_id.id &&
+          x.repayment_duration_id === data0.repayment_duration_id.id
+      )[0];
+
+
+
+      const { total, actualDownpayment, actualRepayment } = calculate(
+        this.productData.price,
+        data0,
+        data
+      );
+
+
+
+      this.repaymentCircle = data0.repayment_cycle_id.value;
+      this.rDuration = data0.repayment_duration_id.value;
+      this.fPayment = actualDownpayment;
+      this.rPayment = actualRepayment;
+      this.pPrice = total;
+
+      this.sixthFormGroup = this._formBuilder.group({
+        repaymentPrice: [actualRepayment],
+        totalPrice: [total],
+        downPayment: [actualDownpayment]
+      });
+
+    } catch (e) {
+      this.repaymentCircle = "0";
+      this.rDuration = "0";
+      this.fPayment = "0";
+      this.rPayment = "0";
+      this.pPrice = "0";
+    }
   }
 }

@@ -301,7 +301,7 @@
                 <mat-form-field>
                     <mat-select matNativeControl placeholder="Repayment Cycle" formControlName="repayment_cycle_id"
                         required>
-                        <mat-option *ngFor="let type of repaymentCyclesopt;" [value]="type.id"> {{type.name}}
+                        <mat-option *ngFor="let type of repaymentCyclesopt;" [value]="type"> {{type.name}}
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
@@ -318,7 +318,7 @@
                 <mat-form-field>
                     <mat-select matNativeControl placeholder="Repayment Duration"
                         formControlName="repayment_duration_id" required>
-                        <mat-option *ngFor="let plan of repaymentDuration;" [value]="plan.id"> {{plan.name}}
+                        <mat-option *ngFor="let plan of repaymentDuration;" [value]="plan"> {{plan.name}}
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
@@ -326,7 +326,7 @@
                 <mat-form-field>
                     <mat-select matNativeControl placeholder="Downpayment Rates" formControlName="payment_type_id"
                         required>
-                        <mat-option *ngFor="let plan of downPaymentRates;" [value]="plan.id"> {{plan.name}}
+                        <mat-option *ngFor="let plan of downPaymentRates;" [value]="plan"> {{plan.name}}
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
@@ -398,7 +398,7 @@
                         Down Payment
                     </ion-col>
                     <ion-col>
-                        {{sixthFormGroup.value.downPayment | currency:'NGN'}}
+                        {{fPayment | currency:'NGN' }}
                     </ion-col>
                 </ion-row>
 
@@ -407,7 +407,7 @@
                         Repayment
                     </ion-col>
                     <ion-col>
-                        {{sixthFormGroup.value.repaymentPrice | currency:'NGN'}}
+                        {{rPayment | currency:'NGN' }}
                     </ion-col>
                 </ion-row>
 
@@ -416,7 +416,7 @@
                         Total Price
                     </ion-col>
                     <ion-col>
-                        {{sixthFormGroup.value.totalPrice | currency:'NGN'}}
+                        {{pPrice | currency:'NGN'}}
                     </ion-col>
                 </ion-row>
 
