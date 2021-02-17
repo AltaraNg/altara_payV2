@@ -177,10 +177,10 @@ export class DashboardPage implements OnInit {
     this.saleTypes = [
       { id: 1, name: "New -0%", percent: 0 },
       // { id: 2, name: "sala-promo -0%", percent: 0 },
-      { id: 3, name: "group5 -5%", percent: 5 },
-      { id: 4, name: "group10 -10%", percent: 10 },
+      // { id: 3, name: "group5 -5%", percent: 5 },
+      // { id: 4, name: "group10 -10%", percent: 10 },
       // { id: 5, name: "xmas-promo -0%", percent: 0 },
-      { id: 6, name: "Renewal -5%", percent: 5 },
+      { id: 2, name: "Renewal -5%", percent: 5 },
       // { id: 7, name: "family-friend -5%", percent: 5 },
       // { id: 8, name: "Direct Debit -5%", percent: 5 }
       // { id: 9, name: "Opening -10%", percent: 10 }
@@ -1384,7 +1384,7 @@ export class DashboardPage implements OnInit {
       this.repaymentCircle = data0.repayment_cycle_id.value;
       this.rDuration = data0.repayment_duration_id.value;
       this.fPayment = actualDownpayment;
-      this.rPayment = actualRepayment;
+      this.rPayment = this.fourthFormGroup.value.saleType === 2 ? actualRepayment : (actualRepayment - (0.05 * actualRepayment));
       this.pPrice = total;
 
       this.sixthFormGroup = this._formBuilder.group({
