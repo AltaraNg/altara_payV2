@@ -312,7 +312,8 @@ export class DashboardPage implements OnInit {
       household: ["", Validators.required]
     });
     this.thirdFormGroup = this._formBuilder.group({
-      productSku: ["", Validators.required]
+      productSku: ["", Validators.required],
+      serial_number: [""],
     });
     this.fourthFormGroup = this._formBuilder.group({
       saleType: ["", Validators.required],
@@ -752,6 +753,8 @@ export class DashboardPage implements OnInit {
     if (this.eightFormGroup.value.repayment_cycle_id != 3) {
       delete this.eightFormGroup.value.custom_date;
     }
+
+
 
 
     console.log(this.eightFormGroup.value);
@@ -1296,6 +1299,9 @@ export class DashboardPage implements OnInit {
       "sales_category_id": this.fourthFormGroup.value.saleCategory,
       "owner_id": this.fourthFormGroup.value.owner,
       "payment_method_id": this.transfer ? this.paymentMethods.find((data) => data.name === 'transfer').id : this.paymentMethods.find((data) => data.name === 'direct-debit').id,
+    }
+    if (this.thirdFormGroup.value.serial_number) {
+      data.serial_number = this.thirdFormGroup.value.serial_number
     }
     return this.http.post(this.env.NEW_API_URL + '/api/new_order', data, options
     ).pipe(
