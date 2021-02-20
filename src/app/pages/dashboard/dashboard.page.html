@@ -249,20 +249,20 @@
                     </mat-select>
                 </mat-form-field>
                 <hr>
-                <mat-form-field>
+                <!-- <mat-form-field>
                     <mat-select matNativeControl formControlName="salePlan" required>
                         <mat-option value="">Select Sales </mat-option>
                         <mat-option *ngFor="let plan of salePlans;" [value]="plan.type"> {{plan.type}} </mat-option>
                     </mat-select>
                 </mat-form-field>
-                <hr>
-                <mat-form-field>
+                <hr> -->
+                <!-- <mat-form-field>
                     <mat-select matNativeControl formControlName="saleDetail" required>
                         <mat-option value="">Select Sales Plan</mat-option>
                         <mat-option *ngFor="let plan of saleDetails;" [value]="plan.id"> {{plan.name}} </mat-option>
                     </mat-select>
                 </mat-form-field>
-                <hr>
+                <hr> -->
                 <mat-form-field>
                     <mat-select (selectionChange)="fetchRoles()" matNativeControl formControlName="saleCategory"
                         required>
@@ -309,7 +309,7 @@
                     </mat-select>
                 </mat-form-field>
                 <hr>
-                <mat-form-field *ngIf="eightFormGroup.value.repayment_cycle_id==3;else other_content">
+                <mat-form-field *ngIf="eightFormGroup.value.repayment_cycle_id.name=='custom';else other_content">
                     <!-- <input matInput [matDatepicker]="picker" formControlName="custom_date" placeholder="Choose a date">
                     <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                     <mat-datepicker #picker></mat-datepicker> -->
@@ -337,7 +337,7 @@
                 <mat-form-field>
                     <mat-select matNativeControl placeholder="Business Type" formControlName="business_type_id"
                         required>
-                        <mat-option *ngFor="let plan of businessTypes;" [value]="plan.id"> {{plan.name}} </mat-option>
+                        <mat-option *ngFor="let plan of businessTypes;" [value]="plan"> {{plan.name}} </mat-option>
                     </mat-select>
                 </mat-form-field>
 
@@ -388,14 +388,14 @@
                         {{saleType}}
                     </ion-col>
                 </ion-row>
-                <ion-row color="primary">
+                <!-- <ion-row color="primary">
                     <ion-col>
                         Sale Plan
                     </ion-col>
                     <ion-col>
                         {{saleDetail}}
                     </ion-col>
-                </ion-row>
+                </ion-row> -->
                 <ion-row color="primary">
                     <ion-col>
                         Down Payment

@@ -3,7 +3,7 @@ const calculate = (productPrice, data, params) => {
     data.repayment_duration_id.value,
     data.repayment_cycle_id.value
   );
-  
+
   const marketPrice = productPrice * params.margin + productPrice;
   const downPay = (data.payment_type_id.percent / 100) * marketPrice;
   const residual = marketPrice - downPay;
@@ -20,16 +20,23 @@ const calculate = (productPrice, data, params) => {
 
 
 const repaymentCount = (days, cycle) => {
-  const result = days / cycle;
-  if (result >= 24) {
-    return 24;
-  } else if (result >= 12) {
-    return 12;
+  let count = 6;
+  if (days == 360) {
+    count = 24;
+  } else if (days == 180) {
+    count = 12;
   }
-  if (result >= 6) {
-    return 6;
-  }
-  return 3;
+  return count;
 };
 
-export default calculate;
+
+const cashLoan = (productPrice, data, params) => {
+  const actualDownpayment = (data.payment_type_id.percent / 100) * productPrice;
+  const principal = (productPrice - actualDownpayment) / 12;
+  const interest = (params.interest / 100) * (productPrice - actualDownpayment);
+  const actualRepayment = (principal + interest) * 12;
+  const total = actualDownpayment + actualRepayment;
+  return { total, actualDownpayment, actualRepayment };
+}
+
+export { calculate, cashLoan };
