@@ -18,7 +18,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { EnvService } from "src/app/services/env.service";
 import { tap, map } from 'rxjs/operators';
 import { LoaderService } from "src/app/loader.service";
-import calculate from "src/app/helpers/calculator";
+import { calculate, cashLoan } from "src/app/helpers/calculator";
 
 @Component({
   selector: "app-dashboard",
@@ -317,8 +317,8 @@ export class DashboardPage implements OnInit {
     });
     this.fourthFormGroup = this._formBuilder.group({
       saleType: ["", Validators.required],
-      salePlan: ["", Validators.required],
-      saleDetail: ["", Validators.required],
+      // salePlan: ["", Validators.required],
+      // saleDetail: ["", Validators.required],
       saleCategory: ["", Validators.required],
       owner: ["", Validators.required]
 
@@ -329,7 +329,7 @@ export class DashboardPage implements OnInit {
       enterAmount: [0.0, Validators.required]
     });
 
-    this.onChanges();
+    // this.onChanges();
   }
 
   confirmDialog(stepper: MatStepper): void {
@@ -384,17 +384,17 @@ export class DashboardPage implements OnInit {
     this.receiptText = !this.receiptText;
   }
 
-  onChanges(): void {
-    this.fourthFormGroup.get("salePlan").valueChanges.subscribe(val => {
-      this.salePlans.forEach(element => {
-        if (element.type == val) {
-          this.productType = val;
-          this.saleDetails = element.details;
-        }
-      });
+  // onChanges(): void {
+  //   this.fourthFormGroup.get("salePlan").valueChanges.subscribe(val => {
+  //     this.salePlans.forEach(element => {
+  //       if (element.type == val) {
+  //         this.productType = val;
+  //         this.saleDetails = element.details;
+  //       }
+  //     });
 
-    });
-  }
+  //   });
+  // }
 
   get radioValue() {
     return this.fifthFormGroup.get("makePayment").value;
@@ -698,21 +698,21 @@ export class DashboardPage implements OnInit {
 
   checkTypePlan(stepper: MatStepper) {
 
-    this.salePlans.forEach(element => {
-      if (element.type == this.fourthFormGroup.value.salePlan) {
-        this.saleDetails = element.details;
-      }
-    });
+    // this.salePlans.forEach(element => {
+    //   if (element.type == this.fourthFormGroup.value.salePlan) {
+    //     this.saleDetails = element.details;
+    //   }
+    // });
 
-    this.saleDetails.forEach(element => {
-      if (element.id == this.fourthFormGroup.value.saleDetail) {
-        this.saleDetail = element.name;
-        this.salePlanPercent = element.percent;
-        this.salePlanPeriod = element.period;
-        this.salesPlanId = element.id;
-        this.salesType = element.type;
-      }
-    });
+    // this.saleDetails.forEach(element => {
+    //   if (element.id == this.fourthFormGroup.value.saleDetail) {
+    //     this.saleDetail = element.name;
+    //     this.salePlanPercent = element.percent;
+    //     this.salePlanPeriod = element.period;
+    //     this.salesPlanId = element.id;
+    //     this.salesType = element.type;
+    //   }
+    // });
 
     this.saleTypes.forEach(element => {
       if (element.id == this.fourthFormGroup.value.saleType) {
@@ -741,12 +741,12 @@ export class DashboardPage implements OnInit {
 
   nextStep(stepper: MatStepper) {
 
-    if (this.eightFormGroup.value.repayment_cycle_id == 3 && !this.eightFormGroup.value.custom_date) {
+    if (this.eightFormGroup.value.repayment_cycle_id.name == 'custom' && !this.eightFormGroup.value.custom_date) {
       return;
 
     }
 
-    if (this.eightFormGroup.value.repayment_cycle_id != 3) {
+    if (this.eightFormGroup.value.repayment_cycle_id.name != 'custom') {
       delete this.eightFormGroup.value.custom_date;
     }
 
@@ -1284,7 +1284,7 @@ export class DashboardPage implements OnInit {
       "repayment_cycle_id": this.eightFormGroup.value.repayment_cycle_id.id,
       "repayment_duration_id": this.eightFormGroup.value.repayment_duration_id.id,
       "payment_type_id": this.eightFormGroup.value.payment_type_id.id,
-      "business_type_id": this.eightFormGroup.value.business_type_id,
+      "business_type_id": this.eightFormGroup.value.business_type_id.id,
       "customer_id": this.firstFormGroup.value.customerId,
       "inventory_id": this.productData.id,
       "branch_id": localStorage.getItem('branchId'),
@@ -1372,18 +1372,24 @@ export class DashboardPage implements OnInit {
 
       const data = caly.filter(
         (x) =>
-          x.business_type_id === data0.business_type_id &&
+          x.business_type_id === data0.business_type_id.id &&
           x.down_payment_rate_id === data0.payment_type_id.id &&
           x.repayment_duration_id === data0.repayment_duration_id.id
       )[0];
 
 
 
-      const { total, actualDownpayment, actualRepayment } = calculate(
-        this.productData.price,
-        data0,
-        data
-      );
+      const { total, actualDownpayment, actualRepayment } =
+        this.eightFormGroup.value.business_type_id.name.includes('Cash Loan') ? cashLoan(
+          this.productData.price,
+          data0,
+          data) :
+
+          calculate(
+            this.productData.price,
+            data0,
+            data
+          );
 
 
 
