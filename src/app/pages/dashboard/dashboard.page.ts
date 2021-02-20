@@ -1404,7 +1404,7 @@ export class DashboardPage implements OnInit {
       this.fPayment = actualDownpayment;
       this.rPayment = this.fourthFormGroup.value.saleType === 2 ? (actualRepayment - (0.05 * actualRepayment)) : actualRepayment;
       this.pPrice = total;
-      this.repayValue = data0.repayment_duration_id.value;
+      this.repayValue = data0.repayment_duration_id.name;
       this.downpayValue = data0.payment_type_id.percent;
       this.sixthFormGroup = this._formBuilder.group({
         repaymentPrice: [actualRepayment],
