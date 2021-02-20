@@ -313,7 +313,7 @@
                     <!-- <input matInput [matDatepicker]="picker" formControlName="custom_date" placeholder="Choose a date">
                     <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                     <mat-datepicker #picker></mat-datepicker> -->
-                    <input matInput placeholder="Custome Date" formControlName="custom_date" required>
+                    <input matInput placeholder="Custom Date" formControlName="custom_date" required>
                 </mat-form-field>
                 <hr>
                 <ng-template #other_content></ng-template>
@@ -388,14 +388,14 @@
                         {{saleType}}
                     </ion-col>
                 </ion-row>
-                <!-- <ion-row color="primary">
+                <ion-row color="primary">
                     <ion-col>
                         Sale Plan
                     </ion-col>
                     <ion-col>
-                        {{saleDetail}}
+                        {{repayValue}} days {{downpayValue}}%
                     </ion-col>
-                </ion-row> -->
+                </ion-row>
                 <ion-row color="primary">
                     <ion-col>
                         Down Payment

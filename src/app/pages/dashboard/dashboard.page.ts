@@ -78,6 +78,8 @@ export class DashboardPage implements OnInit {
   ref: number;
   remainder: any;
   repayLevel: any;
+  repayValue: any;
+  downpayValue: any;
   order = {
     return: 0,
     p_reciept: "",
@@ -741,7 +743,7 @@ export class DashboardPage implements OnInit {
 
   nextStep(stepper: MatStepper) {
 
-    if (this.eightFormGroup.value.repayment_cycle_id.name == 'custom' && !this.eightFormGroup.value.custom_date) {
+    if (this.eightFormGroup.value.repayment_cycle_id.name == 'custom' && !this.eightFormGroup.value.custom_date || this.eightFormGroup.value.custom_date > 31) {
       return;
 
     }
@@ -1396,9 +1398,10 @@ export class DashboardPage implements OnInit {
       this.repaymentCircle = data0.repayment_cycle_id.value;
       this.rDuration = data0.repayment_duration_id.value;
       this.fPayment = actualDownpayment;
-      this.rPayment = this.fourthFormGroup.value.saleType === 2 ? actualRepayment : (actualRepayment - (0.05 * actualRepayment));
+      this.rPayment = this.fourthFormGroup.value.saleType === 2 ? (actualRepayment - (0.05 * actualRepayment)) : actualRepayment;
       this.pPrice = total;
-
+      this.repayValue = data0.repayment_duration_id.value;
+      this.downpayValue = data0.payment_type_id.percent;
       this.sixthFormGroup = this._formBuilder.group({
         repaymentPrice: [actualRepayment],
         totalPrice: [total],
