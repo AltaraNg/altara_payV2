@@ -1161,7 +1161,6 @@ export class DashboardPage implements OnInit {
     this.seventhFormGroup.reset;
   }
 
-
   keyPress(event: KeyboardEvent) {
     console.log('event event ', this.thirdFormGroup.value.productSku);
     this.authService
@@ -1178,7 +1177,6 @@ export class DashboardPage implements OnInit {
   }
 
   selectedItem(data) {
-
     console.log('data ', data);
     this.productData = data;
   }
@@ -1193,7 +1191,7 @@ export class DashboardPage implements OnInit {
     let options = { headers: headers };
     return this.http.get(this.env.NEW_API_URL + '/api/repayment_cycle', options
     ).subscribe((res) => {
-      this.repaymentCyclesopt = res['data']['data'];
+      this.repaymentCyclesopt = res['data']['data'].filter((x) => x['name'] != 'monthly');
     })
   }
 
@@ -1250,6 +1248,7 @@ export class DashboardPage implements OnInit {
       console.log('===> payment_method <=== ', res)
     })
   }
+
   getBanks() {
     console.log('data getPaymentMethod ===> ');
     let headers = new HttpHeaders({
@@ -1312,6 +1311,7 @@ export class DashboardPage implements OnInit {
       })
     )
   }
+
   getSalesCategory() {
     let headers = new HttpHeaders({
       'Content-Type': 'application/json',
@@ -1326,7 +1326,6 @@ export class DashboardPage implements OnInit {
 
   fetchRoles() {
     this.ionLoader.showLoader();
-
     let headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -1339,19 +1338,6 @@ export class DashboardPage implements OnInit {
       this.roles = res['data'][0]['users'];
     })
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   getCalc() {
     console.log(">>>getCalc>>()");
@@ -1383,8 +1369,6 @@ export class DashboardPage implements OnInit {
           x.repayment_duration_id === data0.repayment_duration_id.id
       )[0];
 
-
-
       const { total, actualDownpayment, actualRepayment } =
         this.eightFormGroup.value.business_type_id.name.includes('Cash Loan') ? cashLoan(
           this.productData.price,
@@ -1396,8 +1380,6 @@ export class DashboardPage implements OnInit {
             data0,
             data
           );
-
-
 
       this.repaymentCircle = data0.repayment_cycle_id.value;
       this.rDuration = data0.repayment_duration_id.value;
