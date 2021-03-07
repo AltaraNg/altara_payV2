@@ -1335,7 +1335,10 @@ export class DashboardPage implements OnInit {
     ).subscribe((res) => {
       this.ionLoader.hideLoader();
 
-      this.roles = res['data'][0]['users'];
+      // this.roles = ;
+
+      this.roles = res['data'][0]['users'].sort((a, b) => a['full_name'].localeCompare(b['full_name']));
+
     })
   }
 
@@ -1349,7 +1352,7 @@ export class DashboardPage implements OnInit {
         "branch_id": localStorage.getItem('branchId'),
         "down_payment": this.sixthFormGroup.value.downPayment,
         "repayment": this.sixthFormGroup.value.repaymentPrice,
-        "product_price": this.productData.price,
+        "product_price": this.pPrice,
         "bank_id": 1,
         "sales_category_id": this.fourthFormGroup.value.saleCategory,
         "owner_id": this.fourthFormGroup.value.owner,
