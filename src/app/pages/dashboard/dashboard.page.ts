@@ -602,7 +602,9 @@ export class DashboardPage implements OnInit {
     var auth_code = (transfer == false) ? this.verifyData.data.authorization.authorization_code : null;
     this.createOrder().subscribe(res => {
       const orderdata = res['data']['order_number'];
+
       if (res) {
+        this.alertService.presentToast("Order Logged Succesfully!");
         this.authService.pushDDdata(
           this.firstFormGroup.value.customerId,
           orderdata,
@@ -626,6 +628,10 @@ export class DashboardPage implements OnInit {
           }
           this.resetForm(stepper);
         });
+      }
+      else {
+        this.alertService.presentToast("Error Occured!");
+
       }
     });
   }
