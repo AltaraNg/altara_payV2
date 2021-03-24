@@ -1352,7 +1352,7 @@ export class DashboardPage implements OnInit {
         "customer_id": this.firstFormGroup.value.customerId,
         "inventory_id": this.productData.id,
         "branch_id": localStorage.getItem('branchId'),
-        "down_payment": this.sixthFormGroup.value.downPayment,
+        "down_payment": this.fifthFormGroup.value.makePayment == "2" ? this.fifthFormGroup.value.enterAmount : this.sixthFormGroup.value.downPayment,
         "repayment": this.sixthFormGroup.value.repaymentPrice,
         "product_price": this.pPrice,
         "bank_id": 1,
@@ -1364,6 +1364,8 @@ export class DashboardPage implements OnInit {
           status_id: 1,
         },
       };
+
+
 
       const caly = this.calculation;
 
