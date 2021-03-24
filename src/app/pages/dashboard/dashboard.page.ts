@@ -407,47 +407,47 @@ export class DashboardPage implements OnInit {
       .comfirmId(this.firstFormGroup.value.customerId)
       .subscribe(result => {
         this.customerData = result;
-        if (this.customerData.checklist.length === 0) {
+        if (this.customerData.customer.length === 0) {
           this.alertService.presentToast("Invalid Customer ID");
         } else {
           this.getreciept();
           this.secondFormGroup = this._formBuilder.group({
-            email: [this.customerData.checklist[0].email, Validators.required],
+            email: [this.customerData.customer[0].email, Validators.required],
             first_name: [
-              this.customerData.checklist[0].first_name,
+              this.customerData.customer[0].first_name,
               Validators.required
             ],
-            middle_name: [this.customerData.checklist[0].middle_name],
+            middle_name: [this.customerData.customer[0].middle_name],
             last_name: [
-              this.customerData.checklist[0].last_name,
+              this.customerData.customer[0].last_name,
               Validators.required
             ],
             phoneNo: [
-              this.customerData.checklist[0].telephone,
+              this.customerData.customer[0].telephone,
               Validators.required
             ],
             dateOfBirth: [
-              this.customerData.checklist[0].date_of_birth,
+              this.customerData.customer[0].date_of_birth,
               Validators.required
             ],
             sector: [
-              this.customerData.checklist[0].employment_status,
+              this.customerData.customer[0].employment_status,
               Validators.required
             ],
             occupation: [
-              this.customerData.checklist[0].occupation,
+              this.customerData.customer[0].occupation,
               Validators.required
             ],
             company: [
-              this.customerData.checklist[0].name_of_company_or_business,
+              this.customerData.customer[0].name_of_company_or_business,
               Validators.required
             ],
             income: [
-              this.customerData.checklist[0].current_sal_or_business_income,
+              this.customerData.customer[0].current_sal_or_business_income,
               Validators.required
             ],
             household: [
-              this.customerData.checklist[0].people_in_household,
+              this.customerData.customer[0].people_in_household,
               Validators.required
             ]
           });

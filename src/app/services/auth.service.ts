@@ -59,8 +59,12 @@ export class AuthService {
 
   comfirmId(id: number) {
     this.ionLoader.showLoader();
-    return this.http.post(this.env.API_URL + 'checkId',
-      { Customer_id: id }
+    let headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${localStorage.getItem('token')}`
+    });
+    let options = { headers: headers };
+    return this.http.get(this.env.NEW_API_URL + '/api/customer/lookup/' + id, options
     ).pipe(
       tap(data => {
         this.ionLoader.hideLoader();
