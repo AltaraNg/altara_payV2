@@ -1,7 +1,6 @@
 const calculate = (productPrice, data, params) => {
   const count = repaymentCount(
     data.repayment_duration_id.value,
-    data.repayment_cycle_id.value
   );
 
   const marketPrice = productPrice * params.margin + productPrice;
@@ -19,7 +18,7 @@ const calculate = (productPrice, data, params) => {
 };
 
 
-const repaymentCount = (days, cycle) => {
+const repaymentCount = (days) => {
   let count = 6;
   if (days == 360) {
     count = 24;
@@ -31,10 +30,14 @@ const repaymentCount = (days, cycle) => {
 
 
 const cashLoan = (productPrice, data, params) => {
+  const count = repaymentCount(
+    data.repayment_duration_id.value
+  );
   const actualDownpayment = (data.payment_type_id.percent / 100) * productPrice;
-  const principal = (productPrice - actualDownpayment) / 12;
-  const interest = (params.interest / 100) * (productPrice - actualDownpayment);
-  const actualRepayment = (principal + interest) * 12;
+  const residual = productPrice - actualDownpayment;
+  const principal = residual / count;
+  const interest = (params.interest / 100) * residual;
+  const actualRepayment = (principal + interest) * count;
   const total = actualDownpayment + actualRepayment;
   return { total, actualDownpayment, actualRepayment };
 }
