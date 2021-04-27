@@ -22,6 +22,8 @@ const repaymentCount = (days) => {
   let count = 6;
   if (days == 360) {
     count = 24;
+  } else if (days == 270) {
+    count = 18;
   } else if (days == 180) {
     count = 12;
   }
