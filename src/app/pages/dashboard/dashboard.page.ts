@@ -1343,9 +1343,17 @@ export class DashboardPage implements OnInit {
 
       // this.roles = ;
 
-      this.roles = res['data'][0]['users'].sort((a, b) => a['full_name'].localeCompare(b['full_name']));
+      this.roles = this.mergeArrays(res['data']).sort((a, b) => a['full_name'].localeCompare(b['full_name']));
 
     })
+  }
+
+  mergeArrays(parent){
+    let result = [];
+    parent.forEach(elem => {
+      result = result.concat(elem.users);
+    })
+    return result;
   }
 
   getCalc() {
