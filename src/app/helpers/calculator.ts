@@ -3,9 +3,9 @@ const calculate = (productPrice, data, params) => {
     data.repayment_duration_id.value,
     data.repayment_cycle_id.value
   );
-  const marketPrice = productPrice * (1 + params.margin)
-  const upFront = (data.payment_type_id.percent / 100) * marketPrice;
-  const residual = marketPrice - upFront;
+  const marketPrice = Math.floor(productPrice * (1 + params.margin))
+  const upFront = Math.floor((data.payment_type_id.percent / 100) * marketPrice);
+  const residual = Math.floor(marketPrice - upFront);
   const tempInstallment = residual / count;
   const tempInterest = residual * (params.interest / 100);
   const totalPremium = (tempInstallment * count) + ( tempInterest * count ) + upFront;
@@ -14,7 +14,7 @@ const calculate = (productPrice, data, params) => {
   const initDownpayment = ((data.payment_type_id.percent / 100) * total);
   const downpayment = initDownpayment + ( ((total - initDownpayment) / count) * data.payment_type_id.plus);
   const actualDownpayment = Math.floor( downpayment / 100) * 100;
-  const actualRepayment = total - actualDownpayment;
+  const actualRepayment = total - downpayment;
   total = Math.ceil(labelPrice / 100) * 100;
   return { total, actualDownpayment, actualRepayment };
 };
