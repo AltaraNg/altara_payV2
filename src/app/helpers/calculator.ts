@@ -12,7 +12,7 @@ const calculate = (productPrice, data, params) => {
   const labelPrice = totalPremium * (1 + params.tax / 100);
   let total = labelPrice;
   const initDownpayment = ((data.payment_type_id.percent / 100) * total);
-  const downpayment = initDownpayment + ( ((total - initDownpayment) / count) * data.payment_type_id.plus);
+  const downpayment = initDownpayment + ( Math.floor(((total - initDownpayment) / count)) * data.payment_type_id.plus);
   const actualDownpayment = Math.floor( downpayment / 100) * 100;
   const actualRepayment = total - downpayment;
   total = Math.ceil(labelPrice / 100) * 100;
