@@ -1,7 +1,7 @@
 const calculate = (productPrice, data, params) => {
   const count = repaymentCount(
     data.repayment_duration_id.value,
-    data.repayment_cycle_id.value
+    14
   );
   const marketPrice = Math.floor(productPrice * (1 + params.margin))
   const upFront = Math.floor((data.payment_type_id.percent / 100) * marketPrice);
