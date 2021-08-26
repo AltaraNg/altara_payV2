@@ -121,6 +121,7 @@ export class DashboardPage implements OnInit {
   pKey: any;
   nextReciept: any;
   productType: any;
+  paymentGateways:any;
   receiptText: boolean = true;
   salesPlanId: any;
   myControl = new FormControl();
@@ -174,6 +175,7 @@ export class DashboardPage implements OnInit {
     this.getSalesCategory();
     this.getCalculation();
     this.getOrderTypes();
+    this.getPaymentGateways();
   }
 
   ngOnInit() {
@@ -296,6 +298,7 @@ export class DashboardPage implements OnInit {
       repayment_cycle_id: ["", Validators.required],
       business_type_id: ["", Validators.required],
       payment_type_id: ["", Validators.required],
+      payment_gateway_id: ["", Validators.required],
       custom_date: [""]
     });
 
@@ -482,7 +485,6 @@ export class DashboardPage implements OnInit {
       )
       .subscribe(result => {
         this.update = result;
-        console.log('debug ', this.update);
         this.isUpdated = this.update.error;
         if (this.isUpdated == false) {
           // create customer in paystack
@@ -499,7 +501,6 @@ export class DashboardPage implements OnInit {
               this.sKey
             )
             .subscribe(response => {
-              // console.log(response);
               this.dataToSave = response;
               if (this.dataToSave != {}) {
                 this.alertService.presentToast(
@@ -512,7 +513,6 @@ export class DashboardPage implements OnInit {
                   )
                   .subscribe(res => {
                     if (res) {
-                      console.log(res);
                     }
                   });
                 if (!(this.secondFormGroup.value.sector === 'formal')) {
@@ -644,7 +644,6 @@ export class DashboardPage implements OnInit {
     this.authService.getBranchId().then(() => {
       this.authService.getLastreceipt().subscribe(result => {
         re = result;
-        console.log(re);
         if (re.id.length == 0) {
           this.lastReceipt = '';
         }
@@ -652,7 +651,6 @@ export class DashboardPage implements OnInit {
           this.lastReceipt = re.id[0].id;
         }
         // this.lastReceipt = 'LSIW00022'
-        console.log(this.lastReceipt);
 
       });
     });
@@ -702,7 +700,6 @@ export class DashboardPage implements OnInit {
                 ? prefix + "0" + r
                 : prefix + r;
     }
-    console.log(nR + "DD");
     return nR + "DD";
   }
 
@@ -736,10 +733,8 @@ export class DashboardPage implements OnInit {
       }
     });
 
-    console.log(this.fourthFormGroup.value);
 
     if (this.thirdFormGroup.value) {
-      console.log(this.productPrice, this.salePlanPercent, this.salePlanPeriod, this.productType, this.salesType)
       // this.priceCal();
       this.illustratedPrice(this.productPrice, this.salePlanPercent, this.salePlanPeriod, this.productType);
 
@@ -767,7 +762,6 @@ export class DashboardPage implements OnInit {
 
 
 
-    console.log(this.eightFormGroup.value);
     if (this.eightFormGroup.value) {
       stepper.next();
     } else {
@@ -778,7 +772,6 @@ export class DashboardPage implements OnInit {
   }
 
   makePayment(stepper: MatStepper) {
-    console.log(this.fifthFormGroup.value);
     if (this.fifthFormGroup.value) {
       stepper.next();
     } else {
@@ -842,7 +835,6 @@ export class DashboardPage implements OnInit {
       }
     ];
 
-    console.log(plan, month);
     let mPrice;
     let dpPrice;
     let rInt;
@@ -860,12 +852,10 @@ export class DashboardPage implements OnInit {
     if (type != 'Cash Loan') {
       f_params.forEach(element => {
         if (month == element.month) {
-          console.log(element.month)
           element.pim.forEach(element2 => {
             if (element2.plan == plan) {
               int = element2.int;
               margin = element2.marg;
-              console.log(element2.int, element2.marg);
             }
           });
         }
@@ -873,12 +863,10 @@ export class DashboardPage implements OnInit {
     } else {
       f_params.forEach(element => {
         if (month == element.month) {
-          console.log(element.month)
           element.pim.forEach(element2 => {
             if (element2.type == this.salesType) {
               int = element2.int;
               margin = element2.marg;
-              console.log('hopppppppi', element2.int, element2.marg);
             }
           });
         }
@@ -886,37 +874,29 @@ export class DashboardPage implements OnInit {
     }
 
     var monthParam = (month == 12) ? 24 : (month == 6) ? 12 : 6;
-    console.log(monthParam);
 
     // market price
     mPrice = this.checkP(wPrice, (wPrice * margin) + wPrice, type);
-    console.log(mPrice)
 
     // downpayment price
     dpPrice = this.checkP(wPrice, mPrice * (plan / 100), type);
-    console.log(dpPrice)
 
     //residual price
     rPrice = this.checkP(wPrice, mPrice - dpPrice, type);
-    console.log(rPrice)
 
     //interest on residual
     rInt = this.checkP(wPrice, (rPrice * (int / 100)), type)
-    console.log(rInt);
 
     // totalresidual after interest
     trInt = this.checkP(wPrice, ((rPrice / monthParam) + rInt) * monthParam, type)
-    console.log(rInt);
 
 
 
     // total before tax
     tbTax = this.checkP(wPrice, trInt + dpPrice, type)
-    console.log(tbTax);
 
     // total after tax
     taTax = this.checkP(wPrice, tbTax + (tbTax * 0.05), type);
-    console.log(taTax);
 
     return taTax;
   }
@@ -930,26 +910,20 @@ export class DashboardPage implements OnInit {
     let taTax = this.rawCal(wPrice, plan, month, type);
 
     var monthParam = (month == 12) ? 24 : (month == 6) ? 12 : 6;
-    console.log(monthParam);
 
     // new downpayment price
     newDp = this.checkP(wPrice, taTax * (plan / 100), type);
-    console.log(newDp)
 
     //new residual price
     newRp = this.checkP(wPrice, taTax - newDp, type);
-    console.log(newRp)
 
     //Montly repayment price
     mRepay = this.checkP(wPrice, newRp / monthParam, type);
-    console.log(mRepay)
 
     if (type != 'Cash Loan') {
 
       newTax = Math.floor(newDp / 100) * 100 + (Math.floor(mRepay / 100) * 100 * (monthParam));
-      console.log('Total Price = ' + newTax);
-      console.log('UpFront = ' + Math.floor(newDp / 100) * 100);
-      console.log('Montly Repayment = ' + Math.floor(mRepay / 100) * 100);
+      
 
       let downP = Math.floor(newDp / 100) * 100
       if (downP == 0) {
@@ -965,10 +939,6 @@ export class DashboardPage implements OnInit {
     }
     else {
       newTax = Math.floor(0.2 * wPrice) + (mRepay * monthParam);
-      console.log('Total Price = ' + newTax);
-      console.log('Equity = ' + Math.floor(0.2 * wPrice));
-      console.log('Montly Repayment = ' + Math.floor(mRepay / 100) * 100);
-
       let downP = Math.floor(0.2 * wPrice);
       if (downP == 0) {
         downP = downP + 100;
@@ -997,11 +967,7 @@ export class DashboardPage implements OnInit {
   processPayment(stepper: MatStepper) {
     this.processBankcode();
     this.ref = Math.floor(Math.random() * 1000000000 + 1);
-    console.log(
-      this.fifthFormGroup.value.makePayment,
-      this.fifthFormGroup.value.enterAmount,
-      this.fifthFormGroup.value.downPayment
-    );
+    
     if (
       this.fifthFormGroup.value.makePayment == "2" &&
       this.fifthFormGroup.value.enterAmount <=
@@ -1029,7 +995,6 @@ export class DashboardPage implements OnInit {
 
   paymentDone($event, stepper: MatStepper) {
     this.authService.generateAuthKey(this.ref, this.sKey).subscribe(result => {
-      console.log(result);
       this.verifyData = result;
       if (result) {
         this.saveData(stepper, this.transfer);
@@ -1050,7 +1015,6 @@ export class DashboardPage implements OnInit {
       this.authService.logAuthcode(order_id, auth_code).subscribe(result => {
         if (result) {
           this.authService.getEpId().then(() => {
-            console.log(this.authService.id);
             this.order.sales_agent = this.authService.id;
             this.pushOrder(stepper);
           });
@@ -1059,7 +1023,6 @@ export class DashboardPage implements OnInit {
     }
     else {
       this.authService.getEpId().then(() => {
-        console.log(this.authService.id);
         this.order.sales_agent = this.authService.id;
         this.pushOrder(stepper);
       });
@@ -1093,7 +1056,6 @@ export class DashboardPage implements OnInit {
     this.order.repaymt = this.sixthFormGroup.value.repaymentPrice;
     this.order.referrer_id = this.firstFormGroup.value.customerId;
     this.order.product_name = this.productName;
-    console.log(this.order);
     let formData = this.toFormData(this.order);
 
     // this.authService.postOrder(formData).subscribe(result => {
@@ -1130,12 +1092,10 @@ export class DashboardPage implements OnInit {
     this.repay.nextdate = this.formatDate(
       this.addDays(new Date(this.order.p_date), 28)
     );
-    console.log(this.repay);
     let formData = this.toFormData(this.repay);
 
     this.authService.updateRepayment(formData).subscribe(result => {
       if (result) {
-        console.log(result);
         this.alertService.presentToast("Repayment Posted");
         this.resetForm(stepper);
       }
@@ -1170,27 +1130,22 @@ export class DashboardPage implements OnInit {
   }
 
   keyPress(event: KeyboardEvent) {
-    console.log('event event ', this.thirdFormGroup.value.productSku);
     this.authService
       .comfirmProduct(this.thirdFormGroup.value.productSku)
       .subscribe(async (res: any) => {
         this.options = res.data.data;
-        console.log('optionsoptionsoptionsoptions ', res.data.data);
         if (this.options.length === 0) {
           this.alertService.presentToast("Product Not Available");
         }
       }, error => {
-        console.log(error);
       });
   }
 
   selectedItem(data) {
-    console.log('data ', data);
     this.productData = data;
   }
 
   getRepaymentCycle() {
-    console.log('data getRepaymentCycle ===> ');
 
     let headers = new HttpHeaders({
       'Content-Type': 'application/json',
@@ -1204,7 +1159,6 @@ export class DashboardPage implements OnInit {
   }
 
   getRepaymentDuration() {
-    console.log('data getRepaymentDuration ===> ');
 
     let headers = new HttpHeaders({
       'Content-Type': 'application/json',
@@ -1218,7 +1172,6 @@ export class DashboardPage implements OnInit {
   }
 
   getDownPaymentRates() {
-    console.log('data getDownPaymentRates ===> ');
     let headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -1231,7 +1184,6 @@ export class DashboardPage implements OnInit {
   }
 
   getBusinessTypes() {
-    console.log('data getBusinessTypesRates ===> ');
     let headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -1244,7 +1196,6 @@ export class DashboardPage implements OnInit {
   }
 
   getPaymentMethod() {
-    console.log('data getPaymentMethod ===> ');
     let headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -1253,12 +1204,10 @@ export class DashboardPage implements OnInit {
     return this.http.get(this.env.NEW_API_URL + '/api/payment_method', options
     ).subscribe((res) => {
       this.paymentMethods = res['paymentMethods'].filter((data) => data.name.includes('direct-debit') || data.name.includes('transfer'));
-      console.log('===> payment_method <=== ', res)
     })
   }
 
   getOrderTypes(){
-    console.log('data getOrderTypes ===> ');
     let headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -1267,13 +1216,24 @@ export class DashboardPage implements OnInit {
     return this.http.get(this.env.NEW_API_URL + '/api/order-types', options
     ).subscribe((res) => {
       this.orderTypes = res['orderTypes'];
-      console.log('===> orderTypes <=== ', res)
+    })
+
+  }
+
+  getPaymentGateways(){
+    let headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${localStorage.getItem('token')}`
+    });
+    let options = { headers: headers };
+    return this.http.get(this.env.NEW_API_URL + '/api/paymentgateways', options
+    ).subscribe((res) => {
+      this.paymentGateways = res['paymentgateways'];
     })
 
   }
 
   getBanks() {
-    console.log('data getPaymentMethod ===> ');
     let headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -1281,13 +1241,11 @@ export class DashboardPage implements OnInit {
     let options = { headers: headers };
     return this.http.get(this.env.NEW_API_URL + '/api/bank', options
     ).subscribe((res) => {
-      console.log('===> banks <=== ', res);
       this.banks = res['banks'];
     })
   }
 
   getCalculation() {
-    console.log('data getCalculation ===> ');
     let headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -1295,7 +1253,6 @@ export class DashboardPage implements OnInit {
     let options = { headers: headers };
     return this.http.get(this.env.NEW_API_URL + '/api/price_calculator', options
     ).subscribe((res) => {
-      console.log('===> getCalculation <=== ', res['data']);
       this.calculation = res['data'];
     })
   }
@@ -1318,6 +1275,7 @@ export class DashboardPage implements OnInit {
       "repayment_duration_id": this.eightFormGroup.value.repayment_duration_id.id,
       "down_payment_rate_id": this.eightFormGroup.value.payment_type_id.id,
       "payment_type_id": this.eightFormGroup.value.payment_type_id.id,
+      "payment_gateway_id": this.eightFormGroup.value.payment_gateway_id.id,
       "business_type_id": this.eightFormGroup.value.business_type_id.id,
       "customer_id": this.firstFormGroup.value.customerId,
       "inventory_id": this.productData.id,
@@ -1380,7 +1338,6 @@ export class DashboardPage implements OnInit {
   }
 
   getCalc() {
-    console.log(">>>getCalc>>()");
     try {
       const data0 = {
         ...this.eightFormGroup.value,
