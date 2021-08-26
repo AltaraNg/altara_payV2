@@ -341,6 +341,14 @@
                     </mat-select>
                 </mat-form-field>
 
+                <hr>
+                <mat-form-field>
+                    <mat-select matNativeControl placeholder="Collection Channel" formControlName="payment_gateway_id"
+                        required>
+                        <mat-option *ngFor="let plan of paymentGateways;" [value]="plan"> {{plan.name}} </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
                 <!-- <hr>
                 <mat-form-field>
                     <mat-select matNativeControl placeholder="Bank" formControlName="bank_id" required>
