@@ -129,6 +129,7 @@ export class DashboardPage implements OnInit {
   downPaymentRates: any;
   businessTypes: any;
   paymentMethods: any;
+  orderTypes: any;
   banks: any;
 
   repayment_duration: any;
@@ -171,7 +172,8 @@ export class DashboardPage implements OnInit {
     this.getBanks();
     this.getPaymentMethod();
     this.getSalesCategory();
-    this.getCalculation()
+    this.getCalculation();
+    this.getOrderTypes();
   }
 
   ngOnInit() {
@@ -1255,6 +1257,21 @@ export class DashboardPage implements OnInit {
     })
   }
 
+  getOrderTypes(){
+    console.log('data getOrderTypes ===> ');
+    let headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${localStorage.getItem('token')}`
+    });
+    let options = { headers: headers };
+    return this.http.get(this.env.NEW_API_URL + '/api/order-types', options
+    ).subscribe((res) => {
+      this.orderTypes = res['orderTypes'];
+      console.log('===> orderTypes <=== ', res)
+    })
+
+  }
+
   getBanks() {
     console.log('data getPaymentMethod ===> ');
     let headers = new HttpHeaders({
@@ -1290,10 +1307,16 @@ export class DashboardPage implements OnInit {
     });
     let options = { headers: headers };
 
+    let orderType = this.orderTypes.find((item) => {
+      return item.name === 'Altara Pay';
+    })
+
     const data = {
       ...this.eightFormGroup.value,
+      "order_type_id": orderType.id,
       "repayment_cycle_id": this.eightFormGroup.value.repayment_cycle_id.id,
       "repayment_duration_id": this.eightFormGroup.value.repayment_duration_id.id,
+      "down_payment_rate_id": this.eightFormGroup.value.payment_type_id.id,
       "payment_type_id": this.eightFormGroup.value.payment_type_id.id,
       "business_type_id": this.eightFormGroup.value.business_type_id.id,
       "customer_id": this.firstFormGroup.value.customerId,
