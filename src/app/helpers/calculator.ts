@@ -35,7 +35,7 @@ const repaymentCount = (days, cycle) => {
 const cashLoan = (productPrice, data, params) => {
   const count = repaymentCount(
     data.repayment_duration_id.value,
-    data.repayment_cycle_id.value
+    14
   );
   const actualDownpayment = (data.payment_type_id.percent / 100) * productPrice;
   const residual = productPrice - actualDownpayment;
