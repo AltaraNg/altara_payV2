@@ -43,8 +43,11 @@ const cashLoan = (productPrice, data, params) => {
   const residual = productPrice - actualDownpayment;
   const principal = residual / count;
   const interest = (params.interest / 100) * residual;
-  const actualRepayment = (principal + interest) * count;
-  const total = actualDownpayment + actualRepayment;
+  const tempActualRepayment = (principal + interest) * count;
+  var biMonthlyRepayment = Math.round(tempActualRepayment / count / 100) * 100;
+  const actualRepayment = biMonthlyRepayment * count;
+  let total = Math.ceil((actualDownpayment + actualRepayment) / 100) * 100;
+  total = actualRepayment + actualDownpayment;
   return { total, actualDownpayment, actualRepayment };
 }
 
