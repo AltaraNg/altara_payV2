@@ -129,6 +129,17 @@ export class DashboardPage implements OnInit {
   repaymentCyclesopt: any;
   downPaymentRates: any;
   businessTypes: any;
+  busTypeSlug =  {
+    business5: "Renewal( Collateral )",
+    business10: "Renewal( No Collateral )",
+    business7: "Starter( Collateral )",
+    business9: "Starter( No Collateral )",
+    business6: "Employee",
+    business8: "Rent",
+    business2: "Altara Pay Products"
+  }
+
+  ;
   paymentMethods: any;
   orderTypes: any;
   banks: any;
@@ -1191,7 +1202,8 @@ export class DashboardPage implements OnInit {
     let options = { headers: headers };
     return this.http.get(this.env.NEW_API_URL + '/api/business_type', options
     ).subscribe((res) => {
-      this.businessTypes = res['data']['data'].filter((data) => data.name.includes('Altara Pay'));
+
+      this.businessTypes = res['data']['data'].filter((data) => data.name.includes('Altara Pay') && data.status);
     })
   }
 
