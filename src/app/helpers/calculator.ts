@@ -14,8 +14,10 @@ const calculate = (productPrice, data, params) => {
   const initDownpayment = ((data.payment_type_id.percent / 100) * total);
   const downpayment = initDownpayment + ( Math.floor(((total - initDownpayment) / count)) * data.payment_type_id.plus);
   const actualDownpayment = Math.floor( downpayment / 100) * 100;
-  const actualRepayment = total - downpayment;
-  total = Math.ceil(labelPrice / 100) * 100;
+   const tempActualRepayment = total - downpayment;
+   var biMonthlyRepayment = Math.round(tempActualRepayment / count / 100) * 100;
+   const actualRepayment = biMonthlyRepayment * count;
+   total = actualRepayment + actualDownpayment;
   return { total, actualDownpayment, actualRepayment };
 };
 const repaymentCount = (days, cycle) => {
@@ -35,14 +37,17 @@ const repaymentCount = (days, cycle) => {
 const cashLoan = (productPrice, data, params) => {
   const count = repaymentCount(
     data.repayment_duration_id.value,
-    data.repayment_cycle_id.value
+    14
   );
   const actualDownpayment = (data.payment_type_id.percent / 100) * productPrice;
   const residual = productPrice - actualDownpayment;
   const principal = residual / count;
   const interest = (params.interest / 100) * residual;
-  const actualRepayment = (principal + interest) * count;
-  const total = actualDownpayment + actualRepayment;
+  const tempActualRepayment = (principal + interest) * count;
+  var biMonthlyRepayment = Math.round(tempActualRepayment / count / 100) * 100;
+  const actualRepayment = biMonthlyRepayment * count;
+  let total = Math.ceil((actualDownpayment + actualRepayment) / 100) * 100;
+  total = actualRepayment + actualDownpayment;
   return { total, actualDownpayment, actualRepayment };
 }
 

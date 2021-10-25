@@ -655,7 +655,7 @@ export class DashboardPage implements OnInit {
     this.authService.getBranchId().then(() => {
       this.authService.getLastreceipt().subscribe(result => {
         re = result;
-        if (re.id.length == 0) {
+        if (re && re.id && re.id.length == 0) {
           this.lastReceipt = '';
         }
         else {
