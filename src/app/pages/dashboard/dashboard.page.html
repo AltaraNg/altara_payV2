@@ -337,7 +337,7 @@
                 <mat-form-field>
                     <mat-select matNativeControl placeholder="Business Type" formControlName="business_type_id"
                         required>
-                        <mat-option *ngFor="let plan of businessTypes;" [value]="plan"> {{busTypeSlug[plan.slug] || plan.name}}  </mat-option>
+                        <mat-option *ngFor="let plan of businessTypes;" [value]="plan"> {{plan.name || ''}}  </mat-option>
                     </mat-select>
                 </mat-form-field>
 
