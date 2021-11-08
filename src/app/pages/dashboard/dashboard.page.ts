@@ -1242,7 +1242,6 @@ export class DashboardPage implements OnInit {
 		return this.http
 			.get(this.env.NEW_API_URL + '/api/business_type', options)
 			.subscribe((res) => {
-				console.log(res);
 				this.businessTypes = res['data']['data']
 					.filter((data) => data.slug.includes('ap_') && data.status)
 					.sort((a, b) => (a.name > b.name ? 1 : -1));
