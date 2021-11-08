@@ -1445,8 +1445,8 @@ export class DashboardPage implements OnInit {
 			)[0];
 
 			const { total, actualDownpayment, actualRepayment } =
-				this.eightFormGroup.value.business_type_id.name.includes('Cash Loan') ||
-				this.eightFormGroup.value.business_type_id.name.includes('Rentals')
+				this.eightFormGroup.value.business_type_id.slug.includes('cash_loan') ||
+				this.eightFormGroup.value.business_type_id.slug.includes('ap_rentals')
 					? cashLoan(this.productData.price, data0, data)
 					: calculate(this.productData.price, data0, data);
 
