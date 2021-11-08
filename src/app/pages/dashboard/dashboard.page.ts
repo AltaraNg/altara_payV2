@@ -1242,6 +1242,7 @@ export class DashboardPage implements OnInit {
 		return this.http
 			.get(this.env.NEW_API_URL + '/api/business_type', options)
 			.subscribe((res) => {
+				console.log(res);
 				this.businessTypes = res['data']['data']
 					.filter((data) => data.slug.includes('ap_') && data.status)
 					.sort((a, b) => (a.name > b.name ? 1 : -1));
@@ -1445,8 +1446,8 @@ export class DashboardPage implements OnInit {
 			)[0];
 
 			const { total, actualDownpayment, actualRepayment } =
-				this.eightFormGroup.value.business_type_id.name.includes('Cash Loan') ||
-				this.eightFormGroup.value.business_type_id.name.includes('Rentals')
+				this.eightFormGroup.value.business_type_id.slug.includes('cash_loan') ||
+				this.eightFormGroup.value.business_type_id.slug.includes('ap_rentals')
 					? cashLoan(this.productData.price, data0, data)
 					: calculate(this.productData.price, data0, data);
 
