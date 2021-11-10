@@ -3,15 +3,12 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  NEW_API_URL: "https://altara-play-api.herokuapp.com",
+  PAYSTACK_CUSTOMER_API: "https://api.paystack.co/customer",
+  PAYSTACK_CUSTOMER_VERIFY: "https://api.paystack.co/transaction/verify/",
+  API_URL : "https://altara-api.herokuapp.com/api.php?action="
 };
-
-export const NEW_API_URL = "https://altara-play-api.herokuapp.com";
-export const PAYSTACK_CUSTOMER_API = 'https://api.paystack.co/customer';
-export const PAYSTACK_CUSTOMER_VERIFY = 'https://api.paystack.co/transaction/verify/';
-export const API_URL = 'https://altara-api.herokuapp.com/api.php?action=';
-
-
 /*
  * For easier debugging in development mode, you can import the following file
  * to ignore zone related error stack frames such as `zone.run`, `zoneDelegate.invokeTask`.
