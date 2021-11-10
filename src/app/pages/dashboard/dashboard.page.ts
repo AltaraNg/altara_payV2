@@ -18,7 +18,7 @@ import { AlertService } from '../../services/alert.service';
 import { NativeStorage } from '@ionic-native/native-storage/ngx';
 import { Platform } from '@ionic/angular';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { EnvService } from 'src/app/services/env.service';
+import { environment, NEW_API_URL, PAYSTACK_CUSTOMER_API, PAYSTACK_CUSTOMER_VERIFY } from 'src/environments/environment';
 import { tap, map } from 'rxjs/operators';
 import { LoaderService } from 'src/app/loader.service';
 import { calculate, cashLoan } from 'src/app/helpers/calculator';
@@ -163,7 +163,6 @@ export class DashboardPage implements OnInit {
 		private navCtrl: NavController,
 		public dialog: MatDialog,
 		private http: HttpClient,
-		private env: EnvService,
 		private ionLoader: LoaderService
 	) {
 		this.menu.enable(true);
@@ -1199,7 +1198,7 @@ export class DashboardPage implements OnInit {
 		});
 		let options = { headers: headers };
 		return this.http
-			.get(this.env.NEW_API_URL + '/api/repayment_cycle', options)
+			.get(NEW_API_URL + '/api/repayment_cycle', options)
 			.subscribe((res) => {
 				this.repaymentCyclesopt = res['data']['data'].filter(
 					(x) => x['name'] != 'monthly'
@@ -1214,7 +1213,7 @@ export class DashboardPage implements OnInit {
 		});
 		let options = { headers: headers };
 		return this.http
-			.get(this.env.NEW_API_URL + '/api/repayment_duration', options)
+			.get(NEW_API_URL + '/api/repayment_duration', options)
 			.subscribe((res) => {
 				this.repaymentDuration = res['data']['data'];
 			});
@@ -1227,7 +1226,7 @@ export class DashboardPage implements OnInit {
 		});
 		let options = { headers: headers };
 		return this.http
-			.get(this.env.NEW_API_URL + '/api/down_payment_rate', options)
+			.get(NEW_API_URL + '/api/down_payment_rate', options)
 			.subscribe((res) => {
 				this.downPaymentRates = res['data']['data'];
 			});
@@ -1240,7 +1239,7 @@ export class DashboardPage implements OnInit {
 		});
 		let options = { headers: headers };
 		return this.http
-			.get(this.env.NEW_API_URL + '/api/business_type', options)
+			.get(NEW_API_URL + '/api/business_type', options)
 			.subscribe((res) => {
 				this.businessTypes = res['data']['data']
 					.filter((data) => data.slug.includes('ap_') && data.status)
@@ -1255,7 +1254,7 @@ export class DashboardPage implements OnInit {
 		});
 		let options = { headers: headers };
 		return this.http
-			.get(this.env.NEW_API_URL + '/api/payment_method', options)
+			.get(NEW_API_URL + '/api/payment_method', options)
 			.subscribe((res) => {
 				this.paymentMethods = res['paymentMethods'].filter(
 					(data) =>
@@ -1271,7 +1270,7 @@ export class DashboardPage implements OnInit {
 		});
 		let options = { headers: headers };
 		return this.http
-			.get(this.env.NEW_API_URL + '/api/order-types', options)
+			.get(NEW_API_URL + '/api/order-types', options)
 			.subscribe((res) => {
 				this.orderTypes = res['orderTypes'];
 			});
@@ -1284,7 +1283,7 @@ export class DashboardPage implements OnInit {
 		});
 		let options = { headers: headers };
 		return this.http
-			.get(this.env.NEW_API_URL + '/api/paymentgateways', options)
+			.get(NEW_API_URL + '/api/paymentgateways', options)
 			.subscribe((res) => {
 				this.paymentGateways = res['paymentgateways'];
 			});
@@ -1297,7 +1296,7 @@ export class DashboardPage implements OnInit {
 		});
 		let options = { headers: headers };
 		return this.http
-			.get(this.env.NEW_API_URL + '/api/bank', options)
+			.get(NEW_API_URL + '/api/bank', options)
 			.subscribe((res) => {
 				this.banks = res['banks'];
 			});
@@ -1310,7 +1309,7 @@ export class DashboardPage implements OnInit {
 		});
 		let options = { headers: headers };
 		return this.http
-			.get(this.env.NEW_API_URL + '/api/price_calculator', options)
+			.get(NEW_API_URL + '/api/price_calculator', options)
 			.subscribe((res) => {
 				this.calculation = res['data'];
 			});
@@ -1357,7 +1356,7 @@ export class DashboardPage implements OnInit {
 			data.serial_number = this.thirdFormGroup.value.serial_number;
 		}
 		return this.http
-			.post(this.env.NEW_API_URL + '/api/new_order', data, options)
+			.post(NEW_API_URL + '/api/new_order', data, options)
 			.pipe(
 				tap((data) => {
 					return data;
@@ -1372,7 +1371,7 @@ export class DashboardPage implements OnInit {
 		});
 		let options = { headers: headers };
 		return this.http
-			.get(this.env.NEW_API_URL + '/api/sales_category', options)
+			.get(NEW_API_URL + '/api/sales_category', options)
 			.subscribe((res) => {
 				this.salesCategory = res['data']['data'];
 			});
@@ -1387,7 +1386,7 @@ export class DashboardPage implements OnInit {
 		let options = { headers: headers };
 		return this.http
 			.get(
-				this.env.NEW_API_URL +
+				NEW_API_URL +
 					`/api/sales-category/${this.fourthFormGroup.value.saleCategory}/roles`,
 				options
 			)

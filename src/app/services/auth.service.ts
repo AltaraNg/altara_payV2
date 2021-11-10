@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { tap, map } from 'rxjs/operators';
 import { NativeStorage } from '@ionic-native/native-storage/ngx';
-import { EnvService } from './env.service';
+import { environment, NEW_API_URL, PAYSTACK_CUSTOMER_API, PAYSTACK_CUSTOMER_VERIFY, API_URL } from 'src/environments/environment';
 import { Router } from '@angular/router';
 import { User } from '../models/user';
 import { ToastController } from '@ionic/angular';
@@ -29,7 +29,6 @@ export class AuthService {
   constructor(
     private http: HttpClient,
     private storage: NativeStorage,
-    private env: EnvService,
     private router: Router,
     private toastController: ToastController,
     private platform: Platform,
@@ -39,7 +38,7 @@ export class AuthService {
 
 
   login(email: String, password: String) {
-    return this.http.post(this.env.NEW_API_URL + '/api/login',
+    return this.http.post(NEW_API_URL + '/api/login',
       { staff_id: email, password: password }
     ).pipe(
       // tap(user => { user
@@ -64,7 +63,7 @@ export class AuthService {
       'Authorization': `Bearer ${localStorage.getItem('token')}`
     });
     let options = { headers: headers };
-    return this.http.get(this.env.NEW_API_URL + '/api/customer/lookup/' + id, options
+    return this.http.get(NEW_API_URL + '/api/customer/lookup/' + id, options
     ).pipe(
       tap(data => {
         this.ionLoader.hideLoader();
@@ -77,7 +76,7 @@ export class AuthService {
     occupation: String, company: String, income: String, household: String
   ) {
     this.ionLoader.showLoader();
-    return this.http.post(this.env.API_URL + 'updateCustInfo',
+    return this.http.post(API_URL + 'updateCustInfo',
       {
         id: id, email: email, firstName: firstName, middleName: middleName, lastName: lastName, phoneNo: phoneNo, dateOfBirth: dateOfBirth, sector: sector,
         occupation: occupation, company: company, income: income, household: household
@@ -105,7 +104,7 @@ export class AuthService {
   ) {
     // this.ionLoader.showLoader();
 
-    return this.http.post(this.env.API_URL + 'dd_data',
+    return this.http.post(API_URL + 'dd_data',
       {
         customer_id: customer_id,
         order_id: order_id,
@@ -134,7 +133,7 @@ export class AuthService {
     });
     let options = { headers: headers };
 
-    return this.http.get(this.env.NEW_API_URL + `/api/inventory?productName=${productSku}`,
+    return this.http.get(NEW_API_URL + `/api/inventory?productName=${productSku}`,
       options
     ).pipe(
       tap(data => {
@@ -152,7 +151,7 @@ export class AuthService {
     let options = { headers: headers };
     this.ionLoader.showLoader();
 
-    return this.http.post(this.env.PAYSTACK_CUSTOMER_API,
+    return this.http.post(PAYSTACK_CUSTOMER_API,
       { email: email, first_name: firstName, last_name: lastName, phone: phoneNo, metadata: { customerId: id } }, options,
     ).pipe(
       tap(data => {
@@ -165,7 +164,7 @@ export class AuthService {
 
   paystackCustomer(id: Number, customer_code: String,) {
     this.ionLoader.showLoader();
-    return this.http.post(this.env.API_URL + 'paystackCustomerData',
+    return this.http.post(API_URL + 'paystackCustomerData',
       { id: id, customer_code: customer_code }
     ).pipe(
       tap(data => {
@@ -186,7 +185,7 @@ export class AuthService {
   postOrder(order: any) {
     this.ionLoader.showLoader();
 
-    return this.http.post(this.env.API_URL + 'purchase',
+    return this.http.post(API_URL + 'purchase',
       order
     ).pipe(
       tap(data => {
@@ -200,7 +199,7 @@ export class AuthService {
   logAuthcode(order_id: any, auth_code: any) {
     this.ionLoader.showLoader();
 
-    return this.http.post(this.env.API_URL + 'paystackauthcode',
+    return this.http.post(API_URL + 'paystackauthcode',
       { order_id: order_id, auth_code: auth_code }
     ).pipe(
       tap(data => {
@@ -261,7 +260,7 @@ export class AuthService {
   getLastreceipt() {
     // this.ionLoader.showLoader();
 
-    return this.http.post(this.env.API_URL + 'lastReciept',
+    return this.http.post(API_URL + 'lastReciept',
       { branch_id: this.branch_id }
     ).pipe(
       tap(data => {
@@ -276,7 +275,7 @@ export class AuthService {
   getOrderList(customer_id) {
     this.ionLoader.showLoader();
 
-    return this.http.post(this.env.API_URL + 'receiptID',
+    return this.http.post(API_URL + 'receiptID',
       { customer_id: customer_id }
     ).pipe(
       tap(data => {
@@ -294,7 +293,7 @@ export class AuthService {
       'Authorization': `Bearer ${localStorage.getItem('token')}`
     });
     let options = { headers: headers };
-    return this.http.get(this.env.NEW_API_URL + '/api/dd_k', options
+    return this.http.get(NEW_API_URL + '/api/dd_k', options
     ).pipe(
       tap(data => {
         return data;
@@ -306,7 +305,7 @@ export class AuthService {
     let tokenStr = key;
     this.ionLoader.showLoader();
 
-    return this.http.get(this.env.PAYSTACK_CUSTOMER_VERIFY + ref + "", { headers: { "Authorization": `Bearer ${tokenStr}` } }
+    return this.http.get(PAYSTACK_CUSTOMER_VERIFY + ref + "", { headers: { "Authorization": `Bearer ${tokenStr}` } }
     ).pipe(
       tap(data => {
         this.ionLoader.hideLoader();
@@ -319,7 +318,7 @@ export class AuthService {
   updateRepayment(repay: any) {
     this.ionLoader.showLoader();
 
-    return this.http.post(this.env.API_URL + 'formal_repay',
+    return this.http.post(API_URL + 'formal_repay',
       repay
     ).pipe(
       tap(data => {
