@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { tap, map } from 'rxjs/operators';
 import { NativeStorage } from '@ionic-native/native-storage/ngx';
-import { EnvService } from './env.service';
+import { environment } from 'src/environments/environment';
 import { Router } from '@angular/router';
 import { User } from '../models/user';
 import { ToastController } from '@ionic/angular';
@@ -24,12 +24,12 @@ export class AuthService {
   id: any;
   branch_id: any;
   key: any;
+  env = environment
 
 
   constructor(
     private http: HttpClient,
     private storage: NativeStorage,
-    private env: EnvService,
     private router: Router,
     private toastController: ToastController,
     private platform: Platform,

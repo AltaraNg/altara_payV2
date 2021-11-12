@@ -18,7 +18,7 @@ import { AlertService } from '../../services/alert.service';
 import { NativeStorage } from '@ionic-native/native-storage/ngx';
 import { Platform } from '@ionic/angular';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { EnvService } from 'src/app/services/env.service';
+import { environment} from 'src/environments/environment';
 import { tap, map } from 'rxjs/operators';
 import { LoaderService } from 'src/app/loader.service';
 import { calculate, cashLoan } from 'src/app/helpers/calculator';
@@ -29,6 +29,7 @@ import { calculate, cashLoan } from 'src/app/helpers/calculator';
 	styleUrls: ['./dashboard.page.scss'],
 })
 export class DashboardPage implements OnInit {
+	env = environment;
 	minNum = 1;
 	maxNum = 31;
 	user: User;
@@ -163,7 +164,6 @@ export class DashboardPage implements OnInit {
 		private navCtrl: NavController,
 		public dialog: MatDialog,
 		private http: HttpClient,
-		private env: EnvService,
 		private ionLoader: LoaderService
 	) {
 		this.menu.enable(true);
